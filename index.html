@@ -1,0 +1,827 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Camino Primitivo - Reise & Etappenplan 2026</title>
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  
+  <!-- Leaflet CSS & JS für die Karte -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+  <style>
+    /* ==========================================================================
+       1. FARBEN & DESIGNEINSTELLUNGEN
+       ========================================================================== */
+    :root {
+      --bg: #0d1117;           /* Haupt-Hintergrundfarbe (Dunkel) */
+      --card-bg: #161b22;      /* Karten & Tabellen-Hintergrund */
+      --border: #30363d;       /* Rahmentöne */
+      --text: #c9d1d9;         /* Standard-Textfarbe */
+      --text-main: #f0f6fc;    /* Überschriften & wichtige Texte */
+      --text-muted: #8b949e;   /* Nebensächlicher Text / Datumsangaben */
+      
+      /* Akzentfarben für Camino Primitivo */
+      --primary: #f59e0b;      /* Jakobsweg Gelb / Amber */
+      --primary-rgb: 245, 158, 11;
+      --asturien: #38bdf8;     /* Blau (Asturien) */
+      --galicien: #34d399;     /* Grün (Galicien) */
+      --anreise: #a78bfa;      /* Violett (Anreise / Abreise) */
+      --fisterra: #06b6d4;     /* Cyan / Türkis (Fisterra / Meer) */
+      --koenigsetappe: #f43f5e;/* Rot / Pink (Hospitales-Route) */
+      --ziel: #eab308;         /* Gold (Santiago) */
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      line-height: 1.5;
+      padding: 24px 16px;
+    }
+
+    .container {
+      max-width: 1280px;
+      margin: 0 auto;
+    }
+
+    header {
+      margin-bottom: 28px;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: flex-end;
+      gap: 16px;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 20px;
+    }
+
+    .title-group h1 {
+      font-size: 1.85rem;
+      font-weight: 700;
+      color: var(--text-main);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .title-group p {
+      color: var(--text-muted);
+      font-size: 0.95rem;
+      margin-top: 4px;
+    }
+
+    .stats-bar {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .stat-pill {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      padding: 6px 14px;
+      border-radius: 9999px;
+      font-size: 0.82rem;
+      color: var(--text-main);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .stat-pill strong {
+      color: var(--primary);
+    }
+
+    /* Styles für die Kartenansicht oben */
+    .map-section {
+      margin-top: 0;
+      margin-bottom: 24px;
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+    }
+
+    .map-section h2 {
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: var(--text-main);
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    #map {
+      height: 540px;
+      width: 100%;
+      border-radius: 8px;
+      z-index: 1;
+    }
+
+    .leaflet-control-layers {
+      background: #161b22 !important;
+      color: #f0f6fc !important;
+      border: 1px solid #30363d !important;
+      border-radius: 8px !important;
+      padding: 6px 10px !important;
+    }
+    .leaflet-control-layers-toggle {
+      filter: invert(1);
+    }
+
+    .controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 24px;
+    }
+
+    .search-input {
+      flex: 1;
+      min-width: 240px;
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      color: var(--text-main);
+      padding: 10px 14px;
+      border-radius: 8px;
+      font-family: inherit;
+      font-size: 0.9rem;
+      outline: none;
+    }
+
+    .search-input:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 2px rgba(var(--primary-rgb), 0.2);
+    }
+
+    .filter-btn {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 8px 14px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 0.85rem;
+      font-weight: 500;
+      transition: all 0.15s ease;
+    }
+
+    .filter-btn:hover, .filter-btn.active {
+      background: rgba(var(--primary-rgb), 0.12);
+      border-color: var(--primary);
+      color: var(--primary);
+    }
+
+    .table-wrapper {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow-x: auto;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+      font-size: 0.9rem;
+    }
+
+    th {
+      background: #1c2128;
+      color: var(--text-muted);
+      font-weight: 600;
+      text-transform: uppercase;
+      font-size: 0.75rem;
+      letter-spacing: 0.05em;
+      padding: 14px 16px;
+      border-bottom: 1px solid var(--border);
+      white-space: nowrap;
+    }
+
+    td {
+      padding: 14px 16px;
+      border-bottom: 1px solid var(--border);
+      vertical-align: top;
+    }
+
+    tr:last-child td {
+      border-bottom: none;
+    }
+
+    tr:hover td {
+      background: rgba(255, 255, 255, 0.02);
+    }
+
+    .day-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      color: var(--text-main);
+      background: #21262d;
+      border-radius: 6px;
+      padding: 2px 8px;
+      font-size: 0.85rem;
+    }
+
+    .tag-region {
+      display: inline-block;
+      padding: 3px 8px;
+      border-radius: 6px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+    }
+
+    .tag-anreise { background: rgba(167, 139, 250, 0.15); color: var(--anreise); }
+    .tag-asturien { background: rgba(56, 189, 248, 0.15); color: var(--asturien); }
+    .tag-galicien { background: rgba(52, 211, 153, 0.15); color: var(--galicien); }
+    .tag-fisterra { background: rgba(6, 182, 212, 0.15); color: var(--fisterra); }
+    .tag-koenig { background: rgba(244, 63, 94, 0.15); color: var(--koenigsetappe); }
+    .tag-ziel { background: rgba(234, 179, 8, 0.15); color: var(--ziel); }
+
+    .route-title {
+      font-weight: 600;
+      color: var(--text-main);
+      margin-bottom: 2px;
+    }
+
+    .sub-note {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      margin-top: 2px;
+      line-height: 1.4;
+    }
+
+    .dist-pill, .elevation-pill, .transport-pill, .hotel-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 0.8rem;
+      padding: 2px 8px;
+      border-radius: 4px;
+      background: #21262d;
+      color: var(--text-main);
+      font-weight: 500;
+    }
+
+    .dist-pill { font-weight: 600; }
+    .elevation-pill { background: rgba(245, 158, 11, 0.12); color: #fbbf24; font-weight: 600; }
+    .hotel-pill { background: rgba(245, 158, 11, 0.12); color: #fbbf24; }
+    .transport-pill { background: rgba(167, 139, 250, 0.12); color: #c084fc; }
+
+    .koenig-row { background: rgba(244, 63, 94, 0.05) !important; }
+    .travel-row { background: rgba(167, 139, 250, 0.04) !important; }
+    .fisterra-row { background: rgba(6, 182, 212, 0.04) !important; }
+
+    tfoot td {
+      background: #1c2128;
+      font-weight: 700;
+      color: var(--text-main);
+      border-top: 2px solid var(--border);
+    }
+
+    @media (max-width: 860px) {
+      .table-wrapper { display: none; }
+      .mobile-cards { display: flex; flex-direction: column; gap: 12px; }
+      .card {
+        background: var(--card-bg);
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        padding: 16px;
+      }
+      .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+    }
+
+    @media (min-width: 861px) {
+      .mobile-cards { display: none; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="title-group">
+        <h1>🟡 Camino Primitivo — Reise & Etappenplan</h1>
+        <p>04.09.2026 – 22.09.2026 • Anreise via Madrid & León | 13 Etappen | Ausflug nach Fisterra | Heimreise nach München</p>
+      </div>
+      <div class="stats-bar">
+        <div class="stat-pill">📅 <strong>19</strong> Reisetage Gesamt</div>
+        <div class="stat-pill">🥾 <strong>13</strong> Wanderetappen</div>
+        <div class="stat-pill">📏 <strong>309,9</strong> km Distanz</div>
+        <div class="stat-pill">⛰️ <strong>7.300</strong> m Höhenmeter (↑)</div>
+        <div class="stat-pill">🌊 Ausflug Fisterra</div>
+      </div>
+    </header>
+
+    <!-- Karten-Sektion -->
+    <div class="map-section">
+      <h2>🗺️ Interaktive Routen- & Flugkarte</h2>
+      <div id="map"></div>
+    </div>
+
+    <!-- Suchfeld und Filter-Buttons -->
+    <div class="controls">
+      <input type="text" id="searchInput" class="search-input" placeholder="Nach Etappen, Orten, Flügen, Zügen, Fisterra oder Unterkünften suchen..." onkeyup="filterPlan()">
+      <button class="filter-btn active" onclick="setFilter('all', this)">Alle Tage</button>
+      <button class="filter-btn" onclick="setFilter('Anreise', this)">Anreise & Logistik</button>
+      <button class="filter-btn" onclick="setFilter('Asturien', this)">Asturien (Etappe 1–6)</button>
+      <button class="filter-btn" onclick="setFilter('Galicien', this)">Galicien (Etappe 7–13)</button>
+      <button class="filter-btn" onclick="setFilter('Königsetappe', this)">Königsetappe</button>
+      <button class="filter-btn" onclick="setFilter('Fisterra', this)">🌊 Fisterra Ausflug</button>
+      <button class="filter-btn" onclick="setFilter('Abreise', this)">Heimreise</button>
+    </div>
+
+    <!-- Desktop Ansicht (Tabelle) -->
+    <div class="table-wrapper">
+      <table id="planTable">
+        <thead>
+          <tr>
+            <th>Tag / Datum</th>
+            <th>Kategorie</th>
+            <th>Strecke & Transit</th>
+            <th>Details, Flüge & Programm</th>
+            <th>Transport / Wandern</th>
+            <th>Unterkunft</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- Anreise Tag 1 -->
+          <tr data-region="Anreise" class="travel-row">
+            <td><span class="day-badge">Anreise</span><div class="sub-note">04.09. (Fr)</div></td>
+            <td><span class="tag-region tag-anreise">Anreise</span></td>
+            <td><div class="route-title">München ➔ Madrid ➔ León</div></td>
+            <td>
+              Flug IB1310 um 12:10 Uhr ab München nach Madrid.<br>
+              Weiterfahrt per Zug um 17:30 Uhr nach León (Ankunft: 19:47 Uhr).
+            </td>
+            <td><span class="transport-pill">✈️ IB1310 | 🚆 Zug (17:30)</span></td>
+            <td><span class="hotel-pill">🏨 Leon Hostel Jabalquinto</span></td>
+          </tr>
+
+          <!-- Anreise Tag 2 -->
+          <tr data-region="Anreise" class="travel-row">
+            <td><span class="day-badge">Anreise</span><div class="sub-note">05.09. (Sa)</div></td>
+            <td><span class="tag-region tag-anreise">Anreise</span></td>
+            <td><div class="route-title">León ➔ Oviedo</div></td>
+            <td>
+              Morgens/mittags Erkundung von León.<br>
+              Busfahrt nach Oviedo & Akklimatisierung vor dem Start.
+            </td>
+            <td><span class="transport-pill">🚌 Fernbus</span></td>
+            <td><span class="hotel-pill">🏨 La Hospederia</span></td>
+          </tr>
+
+          <!-- Etappe 1 -->
+          <tr data-region="Asturien">
+            <td><span class="day-badge">Etappe 1</span><div class="sub-note">06.09. (So)</div></td>
+            <td><span class="tag-region tag-asturien">Asturien</span></td>
+            <td><div class="route-title">Oviedo ➔ Grado</div></td>
+            <td>Auftaktetappe ab der Kathedrale Oviedo</td>
+            <td><span class="dist-pill">📏 26,5 km</span> <span class="elevation-pill">⛰️ 620 hm</span></td>
+            <td><span class="hotel-pill">🏡 Herberge / Pension</span></td>
+          </tr>
+
+          <!-- Etappe 2 -->
+          <tr data-region="Asturien">
+            <td><span class="day-badge">Etappe 2</span><div class="sub-note">07.09. (Mo)</div></td>
+            <td><span class="tag-region tag-asturien">Asturien</span></td>
+            <td><div class="route-title">Grado ➔ Salas</div></td>
+            <td>Malerische Täler, historisches Salas</td>
+            <td><span class="dist-pill">📏 22,1 km</span> <span class="elevation-pill">⛰️ 490 hm</span></td>
+            <td><span class="hotel-pill">🏡 Herberge / Pension</span></td>
+          </tr>
+
+          <!-- Etappe 3 -->
+          <tr data-region="Asturien">
+            <td><span class="day-badge">Etappe 3</span><div class="sub-note">08.09. (Di)</div></td>
+            <td><span class="tag-region tag-asturien">Asturien</span></td>
+            <td><div class="route-title">Salas ➔ Tineo</div></td>
+            <td>Stetiger Anstieg durch asturische Wälder</td>
+            <td><span class="dist-pill">📏 19,9 km</span> <span class="elevation-pill">⛰️ 780 hm</span></td>
+            <td><span class="hotel-pill">🏡 Herberge / Pension</span></td>
+          </tr>
+
+          <!-- Etappe 4 -->
+          <tr data-region="Asturien">
+            <td><span class="day-badge">Etappe 4</span><div class="sub-note">09.09. (Mi)</div></td>
+            <td><span class="tag-region tag-asturien">Asturien</span></td>
+            <td><div class="route-title">Tineo ➔ Borres</div></td>
+            <td>Kürzere Etappe vor der Hospitales-Route</td>
+            <td><span class="dist-pill">📏 15,7 km</span> <span class="elevation-pill">⛰️ 520 hm</span></td>
+            <td><span class="hotel-pill">🏡 Herberge / Pension</span></td>
+          </tr>
+
+          <!-- Etappe 5 -->
+          <tr data-region="Asturien Königsetappe" class="koenig-row">
+            <td><span class="day-badge">Etappe 5</span><div class="sub-note">10.09. (Do)</div></td>
+            <td><span class="tag-region tag-koenig">🔥 Königsetappe</span></td>
+            <td><div class="route-title">Borres ➔ Berducedo</div></td>
+            <td><strong>KÖNIGSETAPPE:</strong> Über die Hospitales-Route (bei gutem Wetter!)</td>
+            <td><span class="dist-pill">📏 24,6 km</span> <span class="elevation-pill">⛰️ 1.100 hm</span></td>
+            <td><span class="hotel-pill">🏡 Herberge / Pension</span></td>
+          </tr>
+
+          <!-- Etappe 6 -->
+          <tr data-region="Asturien">
+            <td><span class="day-badge">Etappe 6</span><div class="sub-note">11.09. (Fr)</div></td>
+            <td><span class="tag-region tag-asturien">Asturien</span></td>
+            <td><div class="route-title">Berducedo ➔ Grandas de Salime</div></td>
+            <td>Abstieg zum Stausee Embalse de Salime</td>
+            <td><span class="dist-pill">📏 20,3 km</span> <span class="elevation-pill">⛰️ 320 hm</span></td>
+            <td><span class="hotel-pill">🏡 Herberge / Pension</span></td>
+          </tr>
+
+          <!-- Etappe 7 -->
+          <tr data-region="Galicien">
+            <td><span class="day-badge">Etappe 7</span><div class="sub-note">12.09. (Sa)</div></td>
+            <td><span class="tag-region tag-galicien">Galicien</span></td>
+            <td><div class="route-title">Grandas de Salime ➔ A Fonsagrada</div></td>
+            <td>Grenzübertritt von Asturien nach Galicien (Puerto del Acebo)</td>
+            <td><span class="dist-pill">📏 25,7 km</span> <span class="elevation-pill">⛰️ 930 hm</span></td>
+            <td><span class="hotel-pill">🏡 Herberge / Pension</span></td>
+          </tr>
+
+          <!-- Etappe 8 -->
+          <tr data-region="Galicien">
+            <td><span class="day-badge">Etappe 8</span><div class="sub-note">13.09. (So)</div></td>
+            <td><span class="tag-region tag-galicien">Galicien</span></td>
+            <td><div class="route-title">A Fonsagrada ➔ O Cádavo</div></td>
+            <td>Typisch galicische Landschaft</td>
+            <td><span class="dist-pill">📏 24,4 km</span> <span class="elevation-pill">⛰️ 610 hm</span></td>
+            <td><span class="hotel-pill">🏡 Herberge / Pension</span></td>
+          </tr>
+
+          <!-- Etappe 9 -->
+          <tr data-region="Galicien">
+            <td><span class="day-badge">Etappe 9</span><div class="sub-note">14.09. (Mo)</div></td>
+            <td><span class="tag-region tag-galicien">Galicien</span></td>
+            <td><div class="route-title">O Cádavo ➔ Lugo</div></td>
+            <td>Ankunft in Lugo (Römische Stadtmauer)</td>
+            <td><span class="dist-pill">📏 30,6 km</span> <span class="elevation-pill">⛰️ 480 hm</span></td>
+            <td><span class="hotel-pill">🏡 Herberge / Pension</span></td>
+          </tr>
+
+          <!-- Etappe 10 -->
+          <tr data-region="Galicien">
+            <td><span class="day-badge">Etappe 10</span><div class="sub-note">15.09. (Di)</div></td>
+            <td><span class="tag-region tag-galicien">Galicien</span></td>
+            <td><div class="route-title">Lugo ➔ Ferreira</div></td>
+            <td>Verlauf durch das galicische Hinterland</td>
+            <td><span class="dist-pill">📏 27,1 km</span> <span class="elevation-pill">⛰️ 380 hm</span></td>
+            <td><span class="hotel-pill">🏡 Herberge / Pension</span></td>
+          </tr>
+
+          <!-- Etappe 11 -->
+          <tr data-region="Galicien">
+            <td><span class="day-badge">Etappe 11</span><div class="sub-note">16.09. (Mi)</div></td>
+            <td><span class="tag-region tag-galicien">Galicien</span></td>
+            <td><div class="route-title">Ferreira ➔ Boente</div></td>
+            <td>Einmündung auf den Camino Francés nahe Melide</td>
+            <td><span class="dist-pill">📏 26,0 km</span> <span class="elevation-pill">⛰️ 420 hm</span></td>
+            <td><span class="hotel-pill">🏡 Herberge / Pension</span></td>
+          </tr>
+
+          <!-- Etappe 12 -->
+          <tr data-region="Galicien">
+            <td><span class="day-badge">Etappe 12</span><div class="sub-note">17.09. (Do)</div></td>
+            <td><span class="tag-region tag-galicien">Galicien</span></td>
+            <td><div class="route-title">Boente ➔ A Rúa</div></td>
+            <td>Vorletzter Tag, mehr Betrieb auf dem Weg</td>
+            <td><span class="dist-pill">📏 26,2 km</span> <span class="elevation-pill">⛰️ 340 hm</span></td>
+            <td><span class="hotel-pill">🏡 Herberge / Pension</span></td>
+          </tr>
+
+          <!-- Etappe 13 / Ziel -->
+          <tr data-region="Galicien Ziel">
+            <td><span class="day-badge">Etappe 13</span><div class="sub-note">18.09. (Fr)</div></td>
+            <td><span class="tag-region tag-ziel">🏁 ZIEL</span></td>
+            <td><div class="route-title">A Rúa ➔ Santiago de Compostela</div></td>
+            <td><strong>CAMINO ZIEL!</strong> Ankunft an der Kathedrale, Pilgerurkunde (Compostela) abholen. 1. Nacht in Santiago.</td>
+            <td><span class="dist-pill">📏 20,8 km</span> <span class="elevation-pill">⛰️ 310 hm</span></td>
+            <td><span class="hotel-pill">🏨 Santiago (Nacht 1)</span></td>
+          </tr>
+
+          <!-- Fisterra Ausflug - Hinfahrt -->
+          <tr data-region="Fisterra" class="fisterra-row">
+            <td><span class="day-badge">Ausflug</span><div class="sub-note">19.09. (Sa)</div></td>
+            <td><span class="tag-region tag-fisterra">🌊 Fisterra</span></td>
+            <td><div class="route-title">Santiago ➔ Fisterra</div></td>
+            <td>Fahrt mit dem Bus an die Atlantikküste / Ende der Welt. Erkundung & Sonnenuntergang am Kap Fisterra.</td>
+            <td><span class="transport-pill">🚌 Monbus (ca. 2 Std.)</span></td>
+            <td><span class="hotel-pill">🏨 Unterkunft in Fisterra</span></td>
+          </tr>
+
+          <!-- Fisterra Aufenthalt -->
+          <tr data-region="Fisterra" class="fisterra-row">
+            <td><span class="day-badge">Ausflug</span><div class="sub-note">20.09. (So)</div></td>
+            <td><span class="tag-region tag-fisterra">🌊 Fisterra</span></td>
+            <td><div class="route-title">Fisterra (Küste & Meer)</div></td>
+            <td>Entspannter Tag am Meer, Strand (Playa de Langosteira), Meeresfrüchte genießen & Seele baumeln lassen.</td>
+            <td><span class="transport-pill">🚶 Küstenweg & Strand</span></td>
+            <td><span class="hotel-pill">🏨 Unterkunft in Fisterra</span></td>
+          </tr>
+
+          <!-- Fisterra Rückfahrt -->
+          <tr data-region="Fisterra" class="fisterra-row">
+            <td><span class="day-badge">Ausflug</span><div class="sub-note">21.09. (Mo)</div></td>
+            <td><span class="tag-region tag-fisterra">🌊 Fisterra</span></td>
+            <td><div class="route-title">Fisterra ➔ Santiago de Compostela</div></td>
+            <td>Rückfahrt mit dem Bus nach Santiago. Letzter Abend & letzte Nacht im historischen Zentrum von Santiago.</td>
+            <td><span class="transport-pill">🚌 Monbus ➔ 🚶 Altstadt</span></td>
+            <td><span class="hotel-pill">🏨 Santiago (Letzte Nacht)</span></td>
+          </tr>
+
+          <!-- Heimreise Tag -->
+          <tr data-region="Abreise" class="travel-row">
+            <td><span class="day-badge">Abreise</span><div class="sub-note">22.09. (Di)</div></td>
+            <td><span class="tag-region tag-anreise">Abreise</span></td>
+            <td><div class="route-title">Santiago ➔ Madrid ➔ München</div></td>
+            <td>
+              <strong>09:20 Uhr:</strong> Flug IB518 ab SCQ nach Madrid (Terminal 4)<br>
+              <strong>Terminalwechsel:</strong> Von Terminal 4 zu Terminal 2 (Shuttlebus/Metro)<br>
+              <strong>15:10 Uhr:</strong> Flug UX1517 ab Madrid (T2) nach München
+            </td>
+            <td><span class="transport-pill">✈️ IB518 ➔ Shuttle T4/T2 ➔ ✈️ UX1517</span></td>
+            <td><span class="hotel-pill">🏠 Ankunft in München</span></td>
+          </tr>
+        </tbody>
+        <tfoot>
+          <tr>
+            <td colspan="4" style="text-align: right;">CAMINO WANDERSTRECKE GESAMT:</td>
+            <td>
+              <span class="dist-pill" style="background: #2d333b;">📏 309,9 km</span>
+              <span class="elevation-pill" style="background: rgba(245, 158, 11, 0.25);">⛰️ 7.300 hm</span>
+            </td>
+            <td>13 Etappen + Fisterra Ausflug</td>
+          </tr>
+        </tfoot>
+      </table>
+    </div>
+
+    <!-- Mobile Cards Ansicht -->
+    <div class="mobile-cards" id="mobileCards"></div>
+  </div>
+
+  <script>
+    let currentRegion = 'all';
+
+    function setFilter(region, btn) {
+      currentRegion = region;
+      document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      filterPlan();
+    }
+
+    function filterPlan() {
+      const q = document.getElementById('searchInput').value.toLowerCase();
+      const rows = document.querySelectorAll('#planTable tbody tr');
+
+      rows.forEach(row => {
+        const text = row.innerText.toLowerCase();
+        const region = row.getAttribute('data-region') || '';
+        const matchesSearch = text.includes(q);
+        const matchesRegion = currentRegion === 'all' || region.includes(currentRegion);
+
+        if (matchesSearch && matchesRegion) {
+          row.style.display = '';
+        } else {
+          row.style.display = 'none';
+        }
+      });
+
+      renderMobileCards();
+    }
+
+    function renderMobileCards() {
+      const container = document.getElementById('mobileCards');
+      container.innerHTML = '';
+      const visibleRows = document.querySelectorAll('#planTable tbody tr');
+
+      visibleRows.forEach(row => {
+        if (row.style.display === 'none') return;
+
+        const cells = row.querySelectorAll('td');
+        const card = document.createElement('div');
+        card.className = 'card';
+        card.innerHTML = `
+          <div class="card-header">
+            <div>${cells[0].innerHTML}</div>
+            <div>${cells[1].innerHTML}</div>
+          </div>
+          <div style="font-size: 1.05rem; font-weight: 700; color: var(--text-main); margin-bottom: 8px;">
+            ${cells[2].innerText}
+          </div>
+          <div style="font-size: 0.88rem; color: var(--text); margin-bottom: 10px;">
+            ${cells[3].innerHTML}
+          </div>
+          <div style="display: flex; flex-wrap: wrap; gap: 6px;">
+            ${cells[4].innerHTML}
+            ${cells[5].innerHTML}
+          </div>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    /* ==========================================================================
+       2. KARTEN-INITIALISIERUNG & ROUTEN
+       ========================================================================== */
+    function initMap() {
+      // 📍 LOGISTIK & ANREISE PUNKTE
+      const intlPoints = {
+        muenchen: { name: "München (MUC)", lat: 48.3537, lng: 11.7861, desc: "<b>Start & Ziel</b><br>✈️ 04.09.: Flug IB1310 nach Madrid (12:10)<br>✈️ 22.09.: Rückflug UX1517 Ankunft aus Madrid" },
+        madrid: { name: "Madrid Barajas (MAD)", lat: 40.4839, lng: -3.5680, desc: "<b>Drehkreuz Madrid</b><br>✈️ 04.09.: Ankunft IB1310 ➔ 🚆 Zug nach León (17:30)<br>✈️ 22.09.: Ankunft IB518 (T4, 09:20) ➔ Shuttle zu T2 ➔ Flug UX1517 (15:10)" },
+        leon: { name: "León", lat: 42.5987, lng: -5.5671, desc: "<b>Zwischenstopp Anreise (04.09. - 05.09.)</b><br>🚆 Ankunft per Zug 19:47 Uhr<br>🏨 <b>Leon Hostel Jabalquinto</b><br>🚌 05.09.: Bus nach Oviedo" },
+        fisterra: { name: "Kap Fisterra / Finisterre", lat: 42.9086, lng: -9.2632, desc: "<b>🌊 Ende der Welt (19.09. – 21.09.)</b><br>🚌 Busfahrt von Santiago am Sa (19.09.)<br>🌅 Sonnenuntergang am Kap & Strandtage<br>🚌 Busrückfahrt nach Santiago am Mo (21.09.)" }
+      };
+
+      // 📍 ORTE / ETAPPENPUNKTE AUF DEM CAMINO PRIMITIVO
+      const waypoints = [
+        { name: "Oviedo", lat: 43.3619, lng: -5.8494, date: "05.09. & 06.09.", info: "Ankunft per Bus aus León | 🏨 La Hospederia<br>Start Kathedrale Oviedo", region: "Asturien", color: "#a78bfa" },
+        { name: "Grado", lat: 43.3889, lng: -6.0718, date: "06.09. (Etappe 1)", info: "Etappe 1: 26,5 km | 620 hm ↑", region: "Asturien", color: "#38bdf8" },
+        { name: "Salas", lat: 43.4131, lng: -6.2597, date: "07.09. (Etappe 2)", info: "Etappe 2: 22,1 km | 490 hm ↑", region: "Asturien", color: "#38bdf8" },
+        { name: "Tineo", lat: 43.3364, lng: -6.4158, date: "08.09. (Etappe 3)", info: "Etappe 3: 19,9 km | 780 hm ↑", region: "Asturien", color: "#38bdf8" },
+        { name: "Borres", lat: 43.3258, lng: -6.5369, date: "09.09. (Etappe 4)", info: "Etappe 4: 15,7 km | 520 hm ↑", region: "Asturien", color: "#38bdf8" },
+        { name: "Berducedo", lat: 43.2758, lng: -6.8394, date: "10.09. (Etappe 5)", info: "Etappe 5 (Königsetappe): 24,6 km | 1.100 hm ↑ (via Hospitales)", region: "Königsetappe", color: "#f43f5e" },
+        { name: "Grandas de Salime", lat: 43.2147, lng: -6.9208, date: "11.09. (Etappe 6)", info: "Etappe 6: 20,3 km | 320 hm ↑ (Embalse de Salime)", region: "Asturien", color: "#38bdf8" },
+        { name: "A Fonsagrada", lat: 43.1256, lng: -7.0700, date: "12.09. (Etappe 7)", info: "Etappe 7: 25,7 km | 930 hm ↑ (Grenzübertritt nach Galicien)", region: "Galicien", color: "#34d399" },
+        { name: "O Cádavo", lat: 43.0189, lng: -7.3061, date: "13.09. (Etappe 8)", info: "Etappe 8: 24,4 km | 610 hm ↑", region: "Galicien", color: "#34d399" },
+        { name: "Lugo", lat: 43.0097, lng: -7.5568, date: "14.09. (Etappe 9)", info: "Etappe 9: 30,6 km | 480 hm ↑ (Römische Stadtmauer)", region: "Galicien", color: "#34d399" },
+        { name: "Ferreira", lat: 42.9231, lng: -7.8089, date: "15.09. (Etappe 10)", info: "Etappe 10: 27,1 km | 380 hm ↑", region: "Galicien", color: "#34d399" },
+        { name: "Boente", lat: 42.8683, lng: -8.0125, date: "16.09. (Etappe 11)", info: "Etappe 11: 26,0 km | 420 hm ↑ (Einmündung Camino Francés)", region: "Galicien", color: "#34d399" },
+        { name: "A Rúa", lat: 42.9036, lng: -8.3183, date: "17.09. (Etappe 12)", info: "Etappe 12: 26,2 km | 340 hm ↑", region: "Galicien", color: "#34d399" },
+        { name: "Santiago de Compostela", lat: 42.8805, lng: -8.5457, date: "18.09. & 21.09.", info: "Kathedrale Santiago<br>🏡 Nacht 1: 18.09. (Fr)<br>🚌 Ausflug Fisterra: 19.09. - 21.09.<br>🏡 Letzte Nacht: 21.09. (Mo)<br>✈️ Rückflug: 22.09. (Di)", region: "Ziel", color: "#eab308" }
+      ];
+
+      // 🗺️ KARTEN-DESIGNS (BASE LAYERS)
+      const darkMap = L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+        attribution: '&copy; OpenStreetMap &copy; CARTO',
+        maxZoom: 19
+      });
+
+      const lightMap = L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+        attribution: '&copy; OpenStreetMap &copy; CARTO',
+        maxZoom: 19
+      });
+
+      const osmMap = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; OpenStreetMap contributors',
+        maxZoom: 19
+      });
+
+      const topoMap = L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; OpenTopoMap',
+        maxZoom: 17
+      });
+
+      // HELLMODUS ALS STANDARD BEIM START SEIZEN (lightMap)
+      const map = L.map('map', { layers: [lightMap] });
+
+      const baseMaps = {
+        "☀️ Hellmodus": lightMap,
+        "🌙 Dunkelmodus": darkMap,
+        "⛰️ Topografisch": topoMap,
+        "🗺️ Straßenkarte": osmMap
+      };
+      L.control.layers(baseMaps).addTo(map);
+
+      const allBounds = [];
+      const latlngs = [];
+
+      // 1. CAMINO WAYPOINTS ZEICHNEN
+      waypoints.forEach((wp, index) => {
+        const pt = [wp.lat, wp.lng];
+        latlngs.push(pt);
+        allBounds.push(pt);
+
+        const popupContent = `
+          <div style="color: #0d1117; font-family: 'Plus Jakarta Sans', sans-serif; min-width: 210px; padding: 2px;">
+            <div style="font-size: 0.75rem; font-weight: 700; color: ${wp.color}; text-transform: uppercase; margin-bottom: 2px;">
+              ${wp.date}
+            </div>
+            <h3 style="margin: 0 0 8px 0; font-size: 1.05rem; color: #161b22; border-bottom: 1px solid #ddd; padding-bottom: 4px;">
+              ${index === 0 ? '🏁 Start Camino' : (index === waypoints.length - 1 ? '🎉 Ziel Santiago' : 'Etappe ' + index)}: ${wp.name}
+            </h3>
+            <div style="font-size: 0.85rem; margin-bottom: 6px; line-height: 1.3; color: #24292f;">
+              ${wp.info}
+            </div>
+            <div style="font-size: 0.82rem; color: #57606a;">
+              <strong>📍 Region:</strong> ${wp.region}
+            </div>
+          </div>
+        `;
+
+        L.circleMarker(pt, {
+          color: wp.color,
+          fillColor: wp.color,
+          fillOpacity: 0.85,
+          radius: index === 0 || index === waypoints.length - 1 || wp.region === 'Königsetappe' ? 9 : 6,
+          weight: 2
+        }).addTo(map).bindPopup(popupContent);
+      });
+
+      // Hauptlinie des Camino Primitivo (Gelb)
+      L.polyline(latlngs, {
+        color: '#f59e0b',
+        weight: 4,
+        opacity: 0.85,
+        dashArray: '6, 8'
+      }).addTo(map);
+
+      // 2. INTERNATIONAL & LOGISTIK PUNKTE (München, Madrid, León, Fisterra)
+      Object.keys(intlPoints).forEach(key => {
+        const p = intlPoints[key];
+        const pt = [p.lat, p.lng];
+        allBounds.push(pt);
+
+        const markerColor = key === 'fisterra' ? '#06b6d4' : '#c084fc';
+
+        L.circleMarker(pt, {
+          color: markerColor,
+          fillColor: markerColor,
+          fillOpacity: 0.9,
+          radius: 8,
+          weight: 2
+        }).addTo(map).bindPopup(`
+          <div style="color: #0d1117; font-family: 'Plus Jakarta Sans', sans-serif; min-width: 200px;">
+            <h3 style="margin: 0 0 6px 0; font-size: 1rem; border-bottom: 1px solid #ddd; padding-bottom: 4px; color: ${key === 'fisterra' ? '#0e7490' : '#5b21b6'};">📍 ${p.name}</h3>
+            <div style="font-size: 0.85rem; color: #24292f; line-height: 1.4;">${p.desc}</div>
+          </div>
+        `);
+      });
+
+      // 3. ANREISE-, FISTERRA- & RÜCKREISEVERBINDUNGEN ZEICHNEN
+      // Flug 1: München ➔ Madrid (04.09.)
+      L.polyline([[intlPoints.muenchen.lat, intlPoints.muenchen.lng], [intlPoints.madrid.lat, intlPoints.madrid.lng]], {
+        color: '#a78bfa',
+        weight: 2,
+        opacity: 0.8,
+        dashArray: '4, 8'
+      }).addTo(map);
+
+      // Zug: Madrid ➔ León (04.09.)
+      L.polyline([[intlPoints.madrid.lat, intlPoints.madrid.lng], [intlPoints.leon.lat, intlPoints.leon.lng]], {
+        color: '#38bdf8',
+        weight: 3,
+        opacity: 0.8
+      }).addTo(map);
+
+      // Bus: León ➔ Oviedo (05.09.)
+      L.polyline([[intlPoints.leon.lat, intlPoints.leon.lng], [waypoints[0].lat, waypoints[0].lng]], {
+        color: '#38bdf8',
+        weight: 3,
+        opacity: 0.8
+      }).addTo(map);
+
+      // Bus-Ausflug: Santiago ↔ Fisterra (19.09. & 21.09.)
+      L.polyline([[waypoints[waypoints.length-1].lat, waypoints[waypoints.length-1].lng], [intlPoints.fisterra.lat, intlPoints.fisterra.lng]], {
+        color: '#06b6d4',
+        weight: 3,
+        opacity: 0.9,
+        dashArray: '5, 5'
+      }).addTo(map);
+
+      // Rückflug 1: Santiago ➔ Madrid T4 (22.09.)
+      L.polyline([[waypoints[waypoints.length-1].lat, waypoints[waypoints.length-1].lng], [intlPoints.madrid.lat, intlPoints.madrid.lng]], {
+        color: '#f43f5e',
+        weight: 2,
+        opacity: 0.8,
+        dashArray: '4, 8'
+      }).addTo(map);
+
+      // Rückflug 2: Madrid T2 ➔ München (22.09.)
+      L.polyline([[intlPoints.madrid.lat, intlPoints.madrid.lng], [intlPoints.muenchen.lat, intlPoints.muenchen.lng]], {
+        color: '#f43f5e',
+        weight: 2,
+        opacity: 0.8,
+        dashArray: '4, 8'
+      }).addTo(map);
+
+      // Kartenausschnitt anpassen
+      map.fitBounds(allBounds, { padding: [40, 40] });
+
+      setTimeout(() => { map.invalidateSize(); }, 100);
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      renderMobileCards();
+      initMap();
+    });
+  </script>
+</body>
+</html>
