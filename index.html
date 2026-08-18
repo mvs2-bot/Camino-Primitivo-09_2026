@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="de">
 <head>
@@ -127,41 +126,6 @@
     }
 
     .stat-pill strong { color: var(--primary); }
-
-    /* Progress Section */
-    .progress-section {
-      background: var(--card-bg);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 16px 20px;
-      margin-bottom: 24px;
-      box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
-    }
-
-    .progress-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 8px;
-      font-size: 0.9rem;
-      font-weight: 600;
-      color: var(--text-main);
-    }
-
-    .progress-bar-bg {
-      background: #f1f5f9;
-      height: 12px;
-      border-radius: 999px;
-      overflow: hidden;
-      border: 1px solid var(--border);
-    }
-
-    .progress-bar-fill {
-      background: linear-gradient(90deg, #d97706, #059669);
-      height: 100%;
-      width: 0%;
-      transition: width 0.4s ease;
-    }
 
     /* Map & Elevation Section */
     .map-section {
@@ -304,18 +268,10 @@
     }
 
     .dist-pill { font-weight: 600; }
-    .elevation-pill { background: #fffbeb; color: #b45309; font-weight: 600; border-color: #fef3c7; }
     .hotel-pill { background: #fffbeb; color: #b45309; border-color: #fef3c7; }
     .transport-pill { background: #f3e8ff; color: #6b21a8; border-color: #e9d5ff; }
     .action-btn { background: #ecfdf5; color: #047857; border-color: #a7f3d0; transition: all 0.2s; }
     .action-btn:hover { background: #d1fae5; }
-
-    .checkbox-done {
-      width: 18px;
-      height: 18px;
-      cursor: pointer;
-      accent-color: var(--primary);
-    }
 
     /* Packing List Grid & Cards */
     .packing-grid {
@@ -343,44 +299,8 @@
       padding-bottom: 6px;
     }
 
-    .pack-item {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 8px 0;
-      font-size: 0.88rem;
-      border-bottom: 1px dashed var(--border);
-    }
-
-    .pack-item label { display: flex; align-items: center; gap: 8px; cursor: pointer; color: var(--text-main); }
     .weight-tag { font-size: 0.78rem; color: var(--text-muted); font-weight: 600; }
 
-    /* Emergency & Quick Info Box */
-    .info-grid {
-      display: grid;
-      grid-template-columns: 1fr;
-      gap: 16px;
-    }
-
-    .info-card {
-      background: var(--card-bg);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 18px;
-      box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
-    }
-
-    .info-card h3 { font-size: 1.1rem; color: var(--text-main); margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
-
-    @media (max-width: 860px) {
-      .table-wrapper { display: none; }
-      .mobile-cards { display: flex; flex-direction: column; gap: 12px; }
-      .card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 10px; padding: 16px; }
-      .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
-    }
-
-    @media (min-width: 861px) { .mobile-cards { display: none; } }
-  
     .pack-item-row {
       display: flex;
       align-items: center;
@@ -443,6 +363,31 @@
       gap: 12px;
     }
 
+    /* Emergency & Quick Info Box */
+    .info-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 16px;
+    }
+
+    .info-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 18px;
+      box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+    }
+
+    .info-card h3 { font-size: 1.1rem; color: var(--text-main); margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+
+    @media (max-width: 860px) {
+      .table-wrapper { display: none; }
+      .mobile-cards { display: flex; flex-direction: column; gap: 12px; }
+      .card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 10px; padding: 16px; }
+      .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+    }
+
+    @media (min-width: 861px) { .mobile-cards { display: none; } }
   </style>
 </head>
 <body>
@@ -469,8 +414,6 @@
           <div class="stat-pill">⛰️ <strong>7.300</strong> hm</div>
         </div>
       </header>
-
-
 
       <!-- Karten- & Höhenprofil-Sektion -->
       <div class="map-section">
@@ -499,7 +442,6 @@
         <table id="planTable">
           <thead>
             <tr>
-              
               <th>Tag / Datum</th>
               <th>Kategorie</th>
               <th>Strecke & Transit</th>
@@ -509,9 +451,7 @@
               <th>Unterkunft</th>
             </tr>
           </thead>
-          <tbody id="tableBody">
-            <!-- Dynamisch aus JavaScript befüllt -->
-          </tbody>
+          <tbody id="tableBody"></tbody>
         </table>
       </div>
 
@@ -593,30 +533,30 @@
 
   </div>
 
-    <script>
+  <script>
     /* ==========================================================================
        DATENBANK FÜR ETAPPEN & LOGISTIK
        ========================================================================== */
     const rawData = [
-      { id: "A1", badge: "Anreise", date: "04.09. (Fr)", region: "Anreise", title: "München ➔ Madrid ➔ León", desc: "Flug IB1310 um 12:10 Uhr ab MUC. Zug um 17:30 nach León (Ankunft 19:47).", transport: "✈️ IB1310 | 🚆 Zug (17:30)", hotel: "🏨 Leon Hostel Jabalquinto", km: 0, lat: 42.5987, lng: -5.5671, gpx: null, weatherLoc: "Leon,Spain" },
-      { id: "A2", badge: "Anreise", date: "05.09. (Sa)", region: "Anreise", title: "León ➔ Oviedo", desc: "Morgens Erkundung León. Busfahrt nach Oviedo & Akklimatisierung.", transport: "🚌 Fernbus", hotel: "🏨 La Hospederia", km: 0, lat: 43.3619, lng: -5.8494, gpx: null, weatherLoc: "Oviedo,Spain" },
-      { id: "E1", badge: "Etappe 1", date: "06.09. (So)", region: "Asturien", title: "Oviedo ➔ Grado", desc: "Auftaktetappe ab der Kathedrale Oviedo", transport: "📏 26,5 km | ⛰️ 620 hm", hotel: "🏡 Herberge / Pension", km: 26.5, lat: 43.3889, lng: -6.0718, gpx: "https://www.komoot.de/smarttour/e1208945892", weatherLoc: "Grado,Spain" },
-      { id: "E2", badge: "Etappe 2", date: "07.09. (Mo)", region: "Asturien", title: "Grado ➔ Salas", desc: "Malerische Täler, historisches Salas", transport: "📏 22,1 km | ⛰️ 490 hm", hotel: "🏡 Herberge / Pension", km: 22.1, lat: 43.4131, lng: -6.2597, gpx: null, weatherLoc: "Salas,Spain" },
-      { id: "E3", badge: "Etappe 3", date: "08.09. (Di)", region: "Asturien", title: "Salas ➔ Tineo", desc: "Stetiger Anstieg durch asturische Wälder", transport: "📏 19,9 km | ⛰️ 780 hm", hotel: "🏡 Herberge / Pension", km: 19.9, lat: 43.3364, lng: -6.4158, gpx: null, weatherLoc: "Tineo,Spain" },
-      { id: "E4", badge: "Etappe 4", date: "09.09. (Mi)", region: "Asturien", title: "Tineo ➔ Borres", desc: "Kürzere Etappe vor der Hospitales-Route", transport: "📏 15,7 km | ⛰️ 520 hm", hotel: "🏡 Herberge / Pension", km: 15.7, lat: 43.3258, lng: -6.5369, gpx: null, weatherLoc: "Tineo,Spain" },
-      { id: "E5", badge: "Etappe 5", date: "10.09. (Do)", region: "Asturien Königsetappe", title: "Borres ➔ Berducedo", desc: "<strong>KÖNIGSETAPPE:</strong> Über die Hospitales-Route (bei gutem Wetter!)", transport: "📏 24,6 km | ⛰️ 1.100 hm", hotel: "🏡 Herberge / Pension", km: 24.6, lat: 43.2758, lng: -6.8394, gpx: null, weatherLoc: "Allande,Spain" },
-      { id: "E6", badge: "Etappe 6", date: "11.09. (Fr)", region: "Asturien", title: "Berducedo ➔ Grandas de Salime", desc: "Abstieg zum Stausee Embalse de Salime", transport: "📏 20,3 km | ⛰️ 320 hm", hotel: "🏡 Herberge / Pension", km: 20.3, lat: 43.2147, lng: -6.9208, gpx: null, weatherLoc: "GrandasdeSalime,Spain" },
-      { id: "E7", badge: "Etappe 7", date: "12.09. (Sa)", region: "Galicien", title: "Grandas de Salime ➔ A Fonsagrada", desc: "Grenzübertritt von Asturien nach Galicien (Puerto del Acebo)", transport: "📏 25,7 km | ⛰️ 930 hm", hotel: "🏡 Herberge / Pension", km: 25.7, lat: 43.1256, lng: -7.0700, gpx: null, weatherLoc: "AFonsagrada,Spain" },
-      { id: "E8", badge: "Etappe 8", date: "13.09. (So)", region: "Galicien", title: "A Fonsagrada ➔ O Cádavo", desc: "Typisch galicische Landschaft", transport: "📏 24,4 km | ⛰️ 610 hm", hotel: "🏡 Herberge / Pension", km: 24.4, lat: 43.0189, lng: -7.3061, gpx: null, weatherLoc: "Baleira,Spain" },
-      { id: "E9", badge: "Etappe 9", date: "14.09. (Mo)", region: "Galicien", title: "O Cádavo ➔ Lugo", desc: "Ankunft in Lugo (Römische Stadtmauer)", transport: "📏 30,6 km | ⛰️ 480 hm", hotel: "🏡 Herberge / Pension", km: 30.6, lat: 43.0097, lng: -7.5568, gpx: null, weatherLoc: "Lugo,Spain" },
-      { id: "E10", badge: "Etappe 10", date: "15.09. (Di)", region: "Galicien", title: "Lugo ➔ Ferreira", desc: "Verlauf durch das galicische Hinterland", transport: "📏 27,1 km | ⛰️ 380 hm", hotel: "🏡 Herberge / Pension", km: 27.1, lat: 42.9231, lng: -7.8089, gpx: null, weatherLoc: "Guntin,Spain" },
-      { id: "E11", badge: "Etappe 11", date: "16.09. (Mi)", region: "Galicien", title: "Ferreira ➔ Boente", desc: "Einmündung auf den Camino Francés nahe Melide", transport: "📏 26,0 km | ⛰️ 420 hm", hotel: "🏡 Herberge / Pension", km: 26.0, lat: 42.8683, lng: -8.0125, gpx: null, weatherLoc: "Melide,Spain" },
-      { id: "E12", badge: "Etappe 12", date: "17.09. (Do)", region: "Galicien", title: "Boente ➔ A Rúa", desc: "Vorletzter Tag, mehr Betrieb auf dem Weg", transport: "📏 26,2 km | ⛰️ 340 hm", hotel: "🏡 Herberge / Pension", km: 26.2, lat: 42.9036, lng: -8.3183, gpx: null, weatherLoc: "Arzua,Spain" },
-      { id: "E13", badge: "Etappe 13", date: "18.09. (Fr)", region: "Galicien Ziel", title: "A Rúa ➔ Santiago de Compostela", desc: "<strong>CAMINO ZIEL!</strong> Ankunft an der Kathedrale, Compostela abholen.", transport: "📏 20,8 km | ⛰️ 310 hm", hotel: "🏨 Santiago (Nacht 1)", km: 20.8, lat: 42.8805, lng: -8.5457, gpx: null, weatherLoc: "SantiagodeCompostela,Spain" },
-      { id: "F1", badge: "Ausflug", date: "19.09. (Sa)", region: "Fisterra", title: "Santiago ➔ Fisterra", desc: "Busfahrt an die Atlantikküste / Ende der Welt. Sonnenuntergang Kap Fisterra.", transport: "🚌 Monbus (ca. 2 Std.)", hotel: "🏨 Unterkunft Fisterra", km: 0, lat: 42.9086, lng: -9.2632, gpx: null, weatherLoc: "Fisterra,Spain" },
-      { id: "F2", badge: "Ausflug", date: "20.09. (So)", region: "Fisterra", title: "Fisterra (Küste & Meer)", desc: "Entspannter Tag am Strand (Playa de Langosteira), Meeresfrüchte genießen.", transport: "🚶 Küstenweg & Strand", hotel: "🏨 Unterkunft Fisterra", km: 0, lat: 42.9086, lng: -9.2632, gpx: null, weatherLoc: "Fisterra,Spain" },
-      { id: "F3", badge: "Ausflug", date: "21.09. (Mo)", region: "Fisterra", title: "Fisterra ➔ Santiago", desc: "Rückfahrt nach Santiago. Letzter Abend im historischen Zentrum.", transport: "🚌 Monbus ➔ 🚶 Altstadt", hotel: "🏨 Santiago (Letzte Nacht)", km: 0, lat: 42.8805, lng: -8.5457, gpx: null, weatherLoc: "SantiagodeCompostela,Spain" },
-      { id: "R1", badge: "Abreise", date: "22.09. (Di)", region: "Abreise", title: "Santiago ➔ Madrid ➔ München", desc: "09:20 Uhr: IB518 nach Madrid T4. Transfer zu T2. 15:10 Uhr: UX1517 nach MUC.", transport: "✈️ IB518 ➔ Shuttle ➔ ✈️ UX1517", hotel: "🏠 Ankunft München", km: 0, lat: 48.3537, lng: 11.7861, gpx: null, weatherLoc: "Munich,Germany" }
+      { id: "A1", badge: "Anreise", date: "04.09. (Fr)", region: "Anreise", title: "München ➔ Madrid ➔ León", desc: "Flug IB1310 um 12:10 Uhr ab MUC. Zug um 17:30 nach León (Ankunft 19:47).", transport: "✈️ IB1310 | 🚆 Zug (17:30)", hotel: "🏨 Leon Hostel Jabalquinto", km: 0, lat: 42.5987, lng: -5.5671, weatherLoc: "Leon,Spain" },
+      { id: "A2", badge: "Anreise", date: "05.09. (Sa)", region: "Anreise", title: "León ➔ Oviedo", desc: "Morgens Erkundung León. Busfahrt nach Oviedo & Akklimatisierung.", transport: "🚌 Fernbus", hotel: "🏨 La Hospederia", km: 0, lat: 43.3619, lng: -5.8494, weatherLoc: "Oviedo,Spain" },
+      { id: "E1", badge: "Etappe 1", date: "06.09. (So)", region: "Asturien", title: "Oviedo ➔ Grado", desc: "Auftaktetappe ab der Kathedrale Oviedo", transport: "📏 26,5 km | ⛰️ 620 hm", hotel: "🏡 Herberge / Pension", km: 26.5, lat: 43.3889, lng: -6.0718, weatherLoc: "Grado,Spain" },
+      { id: "E2", badge: "Etappe 2", date: "07.09. (Mo)", region: "Asturien", title: "Grado ➔ Salas", desc: "Malerische Täler, historisches Salas", transport: "📏 22,1 km | ⛰️ 490 hm", hotel: "🏡 Herberge / Pension", km: 22.1, lat: 43.4131, lng: -6.2597, weatherLoc: "Salas,Spain" },
+      { id: "E3", badge: "Etappe 3", date: "08.09. (Di)", region: "Asturien", title: "Salas ➔ Tineo", desc: "Stetiger Anstieg durch asturische Wälder", transport: "📏 19,9 km | ⛰️ 780 hm", hotel: "🏡 Herberge / Pension", km: 19.9, lat: 43.3364, lng: -6.4158, weatherLoc: "Tineo,Spain" },
+      { id: "E4", badge: "Etappe 4", date: "09.09. (Mi)", region: "Asturien", title: "Tineo ➔ Borres", desc: "Kürzere Etappe vor der Hospitales-Route", transport: "📏 15,7 km | ⛰️ 520 hm", hotel: "🏡 Herberge / Pension", km: 15.7, lat: 43.3258, lng: -6.5369, weatherLoc: "Tineo,Spain" },
+      { id: "E5", badge: "Etappe 5", date: "10.09. (Do)", region: "Asturien Königsetappe", title: "Borres ➔ Berducedo", desc: "<strong>KÖNIGSETAPPE:</strong> Über die Hospitales-Route (bei gutem Wetter!)", transport: "📏 24,6 km | ⛰️ 1.100 hm", hotel: "🏡 Herberge / Pension", km: 24.6, lat: 43.2758, lng: -6.8394, weatherLoc: "Allande,Spain" },
+      { id: "E6", badge: "Etappe 6", date: "11.09. (Fr)", region: "Asturien", title: "Berducedo ➔ Grandas de Salime", desc: "Abstieg zum Stausee Embalse de Salime", transport: "📏 20,3 km | ⛰️ 320 hm", hotel: "🏡 Herberge / Pension", km: 20.3, lat: 43.2147, lng: -6.9208, weatherLoc: "GrandasdeSalime,Spain" },
+      { id: "E7", badge: "Etappe 7", date: "12.09. (Sa)", region: "Galicien", title: "Grandas de Salime ➔ A Fonsagrada", desc: "Grenzübertritt von Asturien nach Galicien (Puerto del Acebo)", transport: "📏 25,7 km | ⛰️ 930 hm", hotel: "🏡 Herberge / Pension", km: 25.7, lat: 43.1256, lng: -7.0700, weatherLoc: "AFonsagrada,Spain" },
+      { id: "E8", badge: "Etappe 8", date: "13.09. (So)", region: "Galicien", title: "A Fonsagrada ➔ O Cádavo", desc: "Typisch galicische Landschaft", transport: "📏 24,4 km | ⛰️ 610 hm", hotel: "🏡 Herberge / Pension", km: 24.4, lat: 43.0189, lng: -7.3061, weatherLoc: "Baleira,Spain" },
+      { id: "E9", badge: "Etappe 9", date: "14.09. (Mo)", region: "Galicien", title: "O Cádavo ➔ Lugo", desc: "Ankunft in Lugo (Römische Stadtmauer)", transport: "📏 30,6 km | ⛰️ 480 hm", hotel: "🏡 Herberge / Pension", km: 30.6, lat: 43.0097, lng: -7.5568, weatherLoc: "Lugo,Spain" },
+      { id: "E10", badge: "Etappe 10", date: "15.09. (Di)", region: "Galicien", title: "Lugo ➔ Ferreira", desc: "Verlauf durch das galicische Hinterland", transport: "📏 27,1 km | ⛰️ 380 hm", hotel: "🏡 Herberge / Pension", km: 27.1, lat: 42.9231, lng: -7.8089, weatherLoc: "Guntin,Spain" },
+      { id: "E11", badge: "Etappe 11", date: "16.09. (Mi)", region: "Galicien", title: "Ferreira ➔ Boente", desc: "Einmündung auf den Camino Francés nahe Melide", transport: "📏 26,0 km | ⛰️ 420 hm", hotel: "🏡 Herberge / Pension", km: 26.0, lat: 42.8683, lng: -8.0125, weatherLoc: "Melide,Spain" },
+      { id: "E12", badge: "Etappe 12", date: "17.09. (Do)", region: "Galicien", title: "Boente ➔ A Rúa", desc: "Vorletzter Tag, mehr Betrieb auf dem Weg", transport: "📏 26,2 km | ⛰️ 340 hm", hotel: "🏡 Herberge / Pension", km: 26.2, lat: 42.9036, lng: -8.3183, weatherLoc: "Arzua,Spain" },
+      { id: "E13", badge: "Etappe 13", date: "18.09. (Fr)", region: "Galicien Ziel", title: "A Rúa ➔ Santiago de Compostela", desc: "<strong>CAMINO ZIEL!</strong> Ankunft an der Kathedrale, Compostela abholen.", transport: "📏 20,8 km | ⛰️ 310 hm", hotel: "🏨 Santiago (Nacht 1)", km: 20.8, lat: 42.8805, lng: -8.5457, weatherLoc: "SantiagodeCompostela,Spain" },
+      { id: "F1", badge: "Ausflug", date: "19.09. (Sa)", region: "Fisterra", title: "Santiago ➔ Fisterra", desc: "Busfahrt an die Atlantikküste / Ende der Welt. Sonnenuntergang Kap Fisterra.", transport: "🚌 Monbus (ca. 2 Std.)", hotel: "🏨 Unterkunft Fisterra", km: 0, lat: 42.9086, lng: -9.2632, weatherLoc: "Fisterra,Spain" },
+      { id: "F2", badge: "Ausflug", date: "20.09. (So)", region: "Fisterra", title: "Fisterra (Küste & Meer)", desc: "Entspannter Tag am Strand (Playa de Langosteira), Meeresfrüchte genießen.", transport: "🚶 Küstenweg & Strand", hotel: "🏨 Unterkunft Fisterra", km: 0, lat: 42.9086, lng: -9.2632, weatherLoc: "Fisterra,Spain" },
+      { id: "F3", badge: "Ausflug", date: "21.09. (Mo)", region: "Fisterra", title: "Fisterra ➔ Santiago", desc: "Rückfahrt nach Santiago. Letzter Abend im historischen Zentrum.", transport: "🚌 Monbus ➔ 🚶 Altstadt", hotel: "🏨 Santiago (Letzte Nacht)", km: 0, lat: 42.8805, lng: -8.5457, weatherLoc: "SantiagodeCompostela,Spain" },
+      { id: "R1", badge: "Abreise", date: "22.09. (Di)", region: "Abreise", title: "Santiago ➔ Madrid ➔ München", desc: "09:20 Uhr: IB518 nach Madrid T4. Transfer zu T2. 15:10 Uhr: UX1517 nach MUC.", transport: "✈️ IB518 ➔ Shuttle ➔ ✈️ UX1517", hotel: "🏠 Ankunft München", km: 0, lat: 48.3537, lng: 11.7861, weatherLoc: "Munich,Germany" }
     ];
 
     /* ==========================================================================
@@ -656,13 +596,29 @@
     ];
 
     /* ==========================================================================
-       APP STATE & LOCAL STORAGE
+       APP STATE & LOCAL STORAGE (ROBUST FÜR GITHUB PAGES & IFRAMES)
        ========================================================================== */
     let currentRegion = 'all';
-    let userPackItems = JSON.parse(localStorage.getItem('camino_pack_items_v9') || 'null');
-    if (!userPackItems || !Array.isArray(userPackItems) || userPackItems.length === 0) {
-      userPackItems = packingData;
+
+    function safeGetStorage(key) {
+      try { return localStorage.getItem(key); } catch (e) { return null; }
     }
+
+    function safeSetStorage(key, val) {
+      try { localStorage.setItem(key, val); } catch (e) {}
+    }
+
+    let storedPack = safeGetStorage('camino_pack_items_v11');
+    let userPackItems = null;
+    try {
+      userPackItems = storedPack ? JSON.parse(storedPack) : null;
+    } catch(e) { userPackItems = null; }
+
+    if (!userPackItems || !Array.isArray(userPackItems) || userPackItems.length === 0) {
+      userPackItems = JSON.parse(JSON.stringify(packingData));
+      safeSetStorage('camino_pack_items_v11', JSON.stringify(userPackItems));
+    }
+
     let map, chart;
 
     /* TAB SWITCHING */
@@ -673,13 +629,14 @@
       btn.classList.add('active');
 
       if (tabId === 'plan-tab' && map) {
-        setTimeout(() => map.invalidateSize(), 100);
+        setTimeout(() => map.invalidateSize(), 150);
       }
     }
 
     /* RENDER TABLE & CARDS */
     function renderPlan() {
       const tbody = document.getElementById('tableBody');
+      if (!tbody) return;
       tbody.innerHTML = '';
 
       rawData.forEach((item) => {
@@ -739,6 +696,7 @@
 
     function renderMobileCards() {
       const container = document.getElementById('mobileCards');
+      if (!container) return;
       container.innerHTML = '';
       const visibleRows = document.querySelectorAll('#planTable tbody tr');
 
@@ -770,7 +728,7 @@
     }
 
     /* ==========================================================================
-       WEATHER API INTEGRATION (Open-Meteo)
+       WEATHER API INTEGRATION
        ========================================================================== */
     async function fetchWeather(locationQuery, btn) {
       btn.innerText = "⏳ Lade...";
@@ -859,7 +817,7 @@
       const item = userPackItems.find(i => i.id === itemId);
       if (item) {
         item.qty = val === "" ? "" : Math.max(0, parseInt(val, 10) || 0);
-        localStorage.setItem('camino_pack_items_v9', JSON.stringify(userPackItems));
+        safeSetStorage('camino_pack_items_v11', JSON.stringify(userPackItems));
         renderPackingList();
       }
     }
@@ -868,7 +826,7 @@
       const item = userPackItems.find(i => i.id === itemId);
       if (item) {
         item.worn = checked;
-        localStorage.setItem('camino_pack_items_v9', JSON.stringify(userPackItems));
+        safeSetStorage('camino_pack_items_v11', JSON.stringify(userPackItems));
         renderPackingList();
       }
     }
@@ -900,6 +858,9 @@
         { name: "A Rúa", lat: 42.9036, lng: -8.3183, date: "17.09. (Etappe 12)", info: "Etappe 12: 26,2 km | 340 hm ↑", region: "Galicien", color: "#059669" },
         { name: "Santiago de Compostela", lat: 42.8805, lng: -8.5457, date: "18.09. & 21.09.", info: "Kathedrale Santiago<br>🏡 Nacht 1: 18.09. (Fr)<br>🚌 Ausflug Fisterra: 19.09. - 21.09.<br>🏡 Letzte Nacht: 21.09. (Mo)<br>✈️ Rückflug: 22.09. (Di)", region: "Ziel", color: "#ca8a04" }
       ];
+
+      const mapContainer = document.getElementById('map');
+      if (!mapContainer) return;
 
       const lightMap = L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', { maxZoom: 19 });
       const darkMap = L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', { maxZoom: 19 });
@@ -973,32 +934,37 @@
 
       map.fitBounds(allBounds, { padding: [30, 30] });
 
-      const ctx = document.getElementById('elevationChart').getContext('2d');
-      const stagesOnly = rawData.filter(d => d.km > 0);
-      
-      chart = new Chart(ctx, {
-        type: 'line',
-        data: {
-          labels: stagesOnly.map(s => s.badge),
-          datasets: [{
-            label: 'Höhenmeter Aufstieg (m)',
-            data: [620, 490, 780, 520, 1100, 320, 930, 610, 480, 380, 420, 340, 310],
-            borderColor: '#d97706',
-            backgroundColor: 'rgba(217, 119, 6, 0.15)',
-            fill: true,
-            tension: 0.3
-          }]
-        },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          plugins: { legend: { display: false } },
-          scales: {
-            x: { ticks: { color: '#64748b', font: { size: 10 } } },
-            y: { ticks: { color: '#64748b' }, grid: { color: '#e2e8f0' } }
+      const chartCanvas = document.getElementById('elevationChart');
+      if (chartCanvas) {
+        const ctx = chartCanvas.getContext('2d');
+        const stagesOnly = rawData.filter(d => d.km > 0);
+        
+        chart = new Chart(ctx, {
+          type: 'line',
+          data: {
+            labels: stagesOnly.map(s => s.badge),
+            datasets: [{
+              label: 'Höhenmeter Aufstieg (m)',
+              data: [620, 490, 780, 520, 1100, 320, 930, 610, 480, 380, 420, 340, 310],
+              borderColor: '#d97706',
+              backgroundColor: 'rgba(217, 119, 6, 0.15)',
+              fill: true,
+              tension: 0.3
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: { legend: { display: false } },
+            scales: {
+              x: { ticks: { color: '#64748b', font: { size: 10 } } },
+              y: { ticks: { color: '#64748b' }, grid: { color: '#e2e8f0' } }
+            }
           }
-        }
-      });
+        });
+      }
+
+      setTimeout(() => { if (map) map.invalidateSize(); }, 300);
     }
 
     window.addEventListener('DOMContentLoaded', () => {
