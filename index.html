@@ -658,7 +658,7 @@
         <!-- Zusammenfassungs-Dashboard -->
         <div class="pack-summary">
           <div class="pack-summary-stat">
-            <span class="pack-summary-val" id="totalWeightKg">0.00 kg</span>
+            <span class="pack-summary-val" id="packWeightKg">0.00 kg</span>
             <span class="pack-summary-lbl">Im Rucksack (Gepackt)</span>
           </div>
           <div class="pack-summary-stat">
@@ -754,14 +754,7 @@
 
   </div>
 
-
-
-
-
-
-
-
-<script>
+  <script>
     let currentRegion = 'all';
     let map, chart;
     const markers = {};
@@ -811,7 +804,7 @@
       ["2|Bekleidung (Wärme & Kälte)", "Warme Jacke Decathlon", 500],
       ["2|Bekleidung (Wärme & Kälte)", "Handschuhe", 28],
       ["2|Bekleidung (Wärme & Kälte)", "Badehose", 70],
-      ["2|Regenschutzausrusrüstung", "Regenponcho", 274],
+      ["2|Regenschutzausrüstung", "Regenponcho", 274],
       ["2|Regenschutzausrüstung", "Windjacke", 73],
       ["2|Schuhe & Fußbekleidung", "Wandersandalen Teva", 574],
       ["2|Schuhe & Fußbekleidung", "Badelatschen", 204],
@@ -884,26 +877,34 @@
 
     let packlist = [];
 
-    /* Lade Packliste aus LocalStorage mit starkem Fallback */
+    /* Lade Packliste aus LocalStorage mit erzwungenem Befüllen bei Leerstand */
     function loadPacklist() {
-      const saved = localStorage.getItem('camino_packlist_2026_v16');
+      const storageKey = 'camino_packlist_2026_v17';
+      const saved = localStorage.getItem(storageKey);
+      
+      let loadedSuccessfully = false;
       if (saved) {
         try { 
-          packlist = JSON.parse(saved); 
-          if (!Array.isArray(packlist) || packlist.length === 0) {
-            packlist = JSON.parse(JSON.stringify(defaultPacklist));
+          const parsed = JSON.parse(saved); 
+          if (Array.isArray(parsed) && parsed.length > 0) {
+            packlist = parsed;
+            loadedSuccessfully = true;
           }
         } catch (e) { 
-          packlist = JSON.parse(JSON.stringify(defaultPacklist)); 
+          loadedSuccessfully = false;
         }
-      } else {
-        packlist = JSON.parse(JSON.stringify(defaultPacklist));
       }
-      savePacklist();
+
+      if (!loadedSuccessfully) {
+        packlist = JSON.parse(JSON.stringify(defaultPacklist));
+        localStorage.setItem(storageKey, JSON.stringify(packlist));
+      }
+      
+      renderPacklist();
     }
 
     function savePacklist() {
-      localStorage.setItem('camino_packlist_2026_v16', JSON.stringify(packlist));
+      localStorage.setItem('camino_packlist_2026_v17', JSON.stringify(packlist));
       renderPacklist();
     }
 
@@ -941,10 +942,17 @@
       });
 
       // Update Dashboard Stats
-      document.getElementById('packWeightKg').innerText = `${(packWeightG / 1000).toFixed(2)} kg`;
-      document.getElementById('wornWeightKg').innerText = `${(wornWeightG / 1000).toFixed(2)} kg`;
-      document.getElementById('grandTotalKg').innerText = `${((packWeightG + wornWeightG) / 1000).toFixed(2)} kg`;
-      document.getElementById('totalPackedItems').innerText = `${packedCount} / ${packlist.length}`;
+      const packEl = document.getElementById('packWeightKg');
+      if (packEl) packEl.innerText = `${(packWeightG / 1000).toFixed(2)} kg`;
+      
+      const wornEl = document.getElementById('wornWeightKg');
+      if (wornEl) wornEl.innerText = `${(wornWeightG / 1000).toFixed(2)} kg`;
+      
+      const totalEl = document.getElementById('grandTotalKg');
+      if (totalEl) totalEl.innerText = `${((packWeightG + wornWeightG) / 1000).toFixed(2)} kg`;
+      
+      const itemsEl = document.getElementById('totalPackedItems');
+      if (itemsEl) itemsEl.innerText = `${packedCount} / ${packlist.length}`;
 
       Object.keys(categories).forEach(cat => {
         const catRow = document.createElement('tr');
