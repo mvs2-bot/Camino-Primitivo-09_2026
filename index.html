@@ -761,7 +761,6 @@
 
 
 
-
 <script>
     let currentRegion = 'all';
     let map, chart;
@@ -790,7 +789,7 @@
       { id: "R1", badge: "Abreise", date: "22.09. (Di)", region: "Abreise", title: "Santiago ➔ Madrid ➔ München", desc: "09:20 Uhr: IB518 nach Madrid (MAD T4). Shuttle zu T2. 15:10 Uhr: UX1517 Rückflug nach MUC.", transport: "✈️ IB518 ➔ Shuttle ➔ ✈️ UX1517", hotel: "🏠 Ankunft München", km: 0, weatherLoc: "Munich,Germany", locationName: "München (MUC)" }
     ];
 
-    /* PACKLISTEN DATENBANK */
+    /* VOLLSTÄNDIGE PACKLISTEN DATENBANK (80 ITEMS) */
     const rawItemsData = [
       ["1|Tragesystem & Schlafen", "Trekkingrucksack (35 L)", 1000],
       ["1|Tragesystem & Schlafen", "Hüttenschlafsack Seide", 179],
@@ -812,7 +811,7 @@
       ["2|Bekleidung (Wärme & Kälte)", "Warme Jacke Decathlon", 500],
       ["2|Bekleidung (Wärme & Kälte)", "Handschuhe", 28],
       ["2|Bekleidung (Wärme & Kälte)", "Badehose", 70],
-      ["2|Regenschutzausrüstung", "Regenponcho", 274],
+      ["2|Regenschutzausrusrüstung", "Regenponcho", 274],
       ["2|Regenschutzausrüstung", "Windjacke", 73],
       ["2|Schuhe & Fußbekleidung", "Wandersandalen Teva", 574],
       ["2|Schuhe & Fußbekleidung", "Badelatschen", 204],
@@ -885,9 +884,9 @@
 
     let packlist = [];
 
-    /* Lade Packliste aus LocalStorage */
+    /* Lade Packliste aus LocalStorage mit starkem Fallback */
     function loadPacklist() {
-      const saved = localStorage.getItem('camino_packlist_2026_v15');
+      const saved = localStorage.getItem('camino_packlist_2026_v16');
       if (saved) {
         try { 
           packlist = JSON.parse(saved); 
@@ -900,11 +899,11 @@
       } else {
         packlist = JSON.parse(JSON.stringify(defaultPacklist));
       }
-      renderPacklist();
+      savePacklist();
     }
 
     function savePacklist() {
-      localStorage.setItem('camino_packlist_2026_v15', JSON.stringify(packlist));
+      localStorage.setItem('camino_packlist_2026_v16', JSON.stringify(packlist));
       renderPacklist();
     }
 
