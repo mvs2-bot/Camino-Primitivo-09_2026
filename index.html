@@ -18,22 +18,35 @@
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
   <style>
+    /* ==========================================================================
+       1. JAKOBSWEG-DESIGN & FARBPALETTE (OPTIMIERTE LESBARKEIT)
+       ========================================================================== */
     :root {
-      --bg: #f8fafc;
-      --card-bg: #ffffff;
-      --border: #e2e8f0;
-      --text: #334155;
-      --text-main: #0f172a;
-      --text-muted: #64748b;
+      /* Warmes, leicht sandiges Hellgrau/Beige für Pilger-Atmosphäre */
+      --bg: #f5f3ef;           
+      --card-bg: #ffffff;      /* Schneeweiß für maximalen Text-Kontrast */
+      --border: #dcd6cd;       /* Sanfter Erdton für Trennlinien */
       
-      --primary: #d97706;
-      --primary-rgb: 217, 119, 6;
-      --asturien: #0284c7;
-      --galicien: #059669;
-      --anreise: #7c3aed;
-      --fisterra: #0891b2;
-      --koenigsetappe: #e11d48;
-      --ziel: #ca8a04;
+      /* Typografie: Sehr dunkler Slate/Fast-Schwarz für beste Lesbarkeit */
+      --text: #1e293b;         
+      --text-main: #0f172a;    
+      --text-muted: #52525b;   
+
+      /* Offizielle Jakobsweg-Farben */
+      --camino-blue: #1e3a8a;  /* Tiefes Königsblau (Jakobsweg-Hintergrund) */
+      --camino-yellow: #ca8a04;/* Kräftiges Jakobs-Gelb */
+      --camino-yellow-light: #fef08a;
+
+      --primary: #1e3a8a;      
+      --primary-rgb: 30, 58, 138;
+      
+      /* Etappen-Farben */
+      --asturien: #0369a1;     /* Kräftiges Ozeanblau */
+      --galicien: #047857;     /* Sattes Waldgrün */
+      --anreise: #6b21a8;      /* Purpur */
+      --fisterra: #0e7490;     /* Atlantik-Cyan */
+      --koenigsetappe: #be123c;/* Rubinrot für Hospitales */
+      --ziel: #854d0e;         /* Kathedralen-Gold/Braun */
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -48,11 +61,12 @@
 
     .container { max-width: 1280px; margin: 0 auto; }
 
+    /* Tab Nav */
     .tab-nav {
       display: flex;
       gap: 10px;
       margin-bottom: 24px;
-      border-bottom: 1px solid var(--border);
+      border-bottom: 3px solid var(--camino-yellow);
       padding-bottom: 12px;
       overflow-x: auto;
     }
@@ -61,23 +75,24 @@
       background: var(--card-bg);
       border: 1px solid var(--border);
       color: var(--text-muted);
-      padding: 10px 18px;
+      padding: 11px 20px;
       border-radius: 8px;
       cursor: pointer;
       font-size: 0.95rem;
-      font-weight: 600;
+      font-weight: 700;
       transition: all 0.2s ease;
       white-space: nowrap;
       display: flex;
       align-items: center;
       gap: 8px;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.04);
     }
 
-    .tab-btn:hover { color: var(--text-main); border-color: var(--primary); }
+    .tab-btn:hover { color: var(--camino-blue); border-color: var(--camino-blue); }
     .tab-btn.active {
-      background: rgba(var(--primary-rgb), 0.1);
-      color: var(--primary);
-      border-color: var(--primary);
+      background: var(--camino-blue);
+      color: #ffffff;
+      border-color: var(--camino-blue);
     }
 
     .tab-content { display: none; }
@@ -95,15 +110,15 @@
     }
 
     .title-group h1 {
-      font-size: 1.85rem;
+      font-size: 1.9rem;
       font-weight: 800;
-      color: var(--text-main);
+      color: var(--camino-blue);
       display: flex;
       align-items: center;
       gap: 10px;
     }
 
-    .title-group p { color: var(--text-muted); font-size: 0.95rem; margin-top: 4px; }
+    .title-group p { color: var(--text-muted); font-size: 0.95rem; margin-top: 4px; font-weight: 500; }
 
     .stats-bar { display: flex; gap: 10px; flex-wrap: wrap; }
 
@@ -112,19 +127,22 @@
       border: 1px solid var(--border);
       padding: 6px 14px;
       border-radius: 9999px;
-      font-size: 0.82rem;
+      font-size: 0.85rem;
       color: var(--text-main);
       display: flex;
       align-items: center;
       gap: 6px;
       box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+      font-weight: 600;
     }
 
-    .stat-pill strong { color: var(--primary); }
+    .stat-pill strong { color: var(--camino-yellow); font-weight: 800; }
 
+    /* Map & Elevation Section */
     .map-section {
       background: var(--card-bg);
       border: 1px solid var(--border);
+      border-top: 4px solid var(--camino-yellow);
       border-radius: 12px;
       padding: 20px;
       margin-bottom: 24px;
@@ -133,15 +151,15 @@
 
     .map-section h2 {
       font-size: 1.25rem;
-      font-weight: 700;
-      color: var(--text-main);
+      font-weight: 800;
+      color: var(--camino-blue);
       margin-bottom: 16px;
       display: flex;
       align-items: center;
       gap: 8px;
     }
 
-    #map { height: 480px; width: 100%; border-radius: 8px; z-index: 1; }
+    #map { height: 480px; width: 100%; border-radius: 8px; z-index: 1; border: 1px solid var(--border); }
 
     .chart-container {
       margin-top: 20px;
@@ -153,6 +171,7 @@
       position: relative;
     }
 
+    /* Controls & Table */
     .controls { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 20px; }
 
     .search-input {
@@ -166,9 +185,10 @@
       font-family: inherit;
       font-size: 0.9rem;
       outline: none;
+      font-weight: 500;
     }
 
-    .search-input:focus { border-color: var(--primary); box-shadow: 0 0 0 2px rgba(var(--primary-rgb), 0.15); }
+    .search-input:focus { border-color: var(--camino-blue); box-shadow: 0 0 0 2px rgba(30, 58, 138, 0.15); }
 
     .filter-btn {
       background: var(--card-bg);
@@ -178,14 +198,14 @@
       border-radius: 8px;
       cursor: pointer;
       font-size: 0.85rem;
-      font-weight: 500;
+      font-weight: 600;
       transition: all 0.15s ease;
     }
 
     .filter-btn:hover, .filter-btn.active {
-      background: rgba(var(--primary-rgb), 0.1);
-      border-color: var(--primary);
-      color: var(--primary);
+      background: var(--camino-blue);
+      border-color: var(--camino-blue);
+      color: #ffffff;
     }
 
     .table-wrapper {
@@ -199,28 +219,29 @@
     table { width: 100%; border-collapse: collapse; text-align: left; font-size: 0.9rem; }
 
     th {
-      background: #f1f5f9;
-      color: var(--text-muted);
-      font-weight: 600;
+      background: #eae6df;
+      color: var(--camino-blue);
+      font-weight: 800;
       text-transform: uppercase;
       font-size: 0.75rem;
       letter-spacing: 0.05em;
       padding: 14px 16px;
-      border-bottom: 1px solid var(--border);
+      border-bottom: 2px solid var(--border);
       white-space: nowrap;
     }
 
-    td { padding: 14px 16px; border-bottom: 1px solid var(--border); vertical-align: top; }
+    td { padding: 14px 16px; border-bottom: 1px solid var(--border); vertical-align: top; color: var(--text-main); }
     tr:last-child td { border-bottom: none; }
-    tr:hover td { background: #f8fafc; }
+    tr:hover td { background: #fdfbf7; }
 
     .day-badge {
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      font-weight: 700;
-      color: var(--text-main);
-      background: #e2e8f0;
+      font-weight: 800;
+      color: var(--camino-blue);
+      background: var(--camino-yellow-light);
+      border: 1px solid #fef08a;
       border-radius: 6px;
       padding: 2px 8px;
       font-size: 0.85rem;
@@ -231,7 +252,7 @@
       padding: 3px 8px;
       border-radius: 6px;
       font-size: 0.75rem;
-      font-weight: 600;
+      font-weight: 700;
       text-transform: uppercase;
     }
 
@@ -242,7 +263,7 @@
     .tag-koenig { background: #ffe4e6; color: var(--koenigsetappe); }
     .tag-ziel { background: #fef9c3; color: var(--ziel); }
 
-    .route-title { font-weight: 600; color: var(--text-main); margin-bottom: 2px; }
+    .route-title { font-weight: 700; color: var(--text-main); margin-bottom: 2px; }
     .sub-note { font-size: 0.82rem; color: var(--text-muted); margin-top: 2px; line-height: 1.4; }
 
     .dist-pill, .elevation-pill, .transport-pill, .hotel-pill, .action-btn {
@@ -250,18 +271,18 @@
       align-items: center;
       gap: 5px;
       font-size: 0.8rem;
-      padding: 3px 8px;
-      border-radius: 4px;
+      padding: 4px 9px;
+      border-radius: 6px;
       background: #f1f5f9;
       color: var(--text-main);
-      font-weight: 500;
+      font-weight: 600;
       text-decoration: none;
       border: 1px solid var(--border);
       cursor: pointer;
     }
 
-    .dist-pill { font-weight: 600; }
-    .hotel-pill { background: #fffbeb; color: #b45309; border-color: #fef3c7; }
+    .dist-pill { font-weight: 700; background: #f8fafc; }
+    .hotel-pill { background: #fffbeb; color: #92400e; border-color: #fef3c7; }
     .transport-pill { background: #f3e8ff; color: #6b21a8; border-color: #e9d5ff; }
     .action-btn { background: #ecfdf5; color: #047857; border-color: #a7f3d0; transition: all 0.2s; }
     .action-btn:hover { background: #d1fae5; }
@@ -277,40 +298,42 @@
       background: var(--card-bg);
       border: 1px solid var(--border);
       border-radius: 12px;
-      padding: 16px;
+      padding: 18px;
       box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
     }
 
     .packing-card h3 {
-      font-size: 1.05rem;
-      color: var(--primary);
+      font-size: 1.1rem;
+      color: var(--camino-blue);
       margin-bottom: 12px;
       display: flex;
       justify-content: space-between;
-      border-bottom: 1px solid var(--border);
+      border-bottom: 2px solid var(--bg);
       padding-bottom: 6px;
+      font-weight: 800;
     }
 
     .subcat-header {
       font-size: 0.85rem;
-      font-weight: 700;
-      color: var(--text-main);
+      font-weight: 800;
+      color: var(--camino-blue);
       text-transform: uppercase;
       letter-spacing: 0.05em;
       background: #f1f5f9;
-      padding: 4px 8px;
+      padding: 5px 10px;
       border-radius: 4px;
-      margin: 12px 0 6px 0;
+      margin: 14px 0 6px 0;
+      border-left: 3px solid var(--camino-yellow);
     }
 
-    .weight-tag { font-size: 0.78rem; color: var(--text-muted); font-weight: 600; }
+    .weight-tag { font-size: 0.8rem; color: var(--text-muted); font-weight: 700; }
 
     .pack-item-row {
       display: flex;
       align-items: center;
       justify-content: space-between;
       gap: 10px;
-      padding: 6px 0;
+      padding: 7px 0;
       border-bottom: 1px dashed var(--border);
       flex-wrap: wrap;
     }
@@ -331,14 +354,14 @@
       text-align: center;
       font-family: inherit;
       font-size: 0.88rem;
-      font-weight: 600;
+      font-weight: 700;
       background: var(--bg);
       color: var(--text-main);
     }
 
     .qty-input:focus {
       outline: none;
-      border-color: var(--primary);
+      border-color: var(--camino-blue);
     }
 
     .worn-label {
@@ -349,16 +372,17 @@
       color: var(--text-muted);
       cursor: pointer;
       user-select: none;
-      background: #f1f5f9;
+      background: #f8fafc;
       padding: 3px 8px;
       border-radius: 6px;
       border: 1px solid var(--border);
       transition: all 0.2s;
+      font-weight: 600;
     }
 
     .worn-label input:checked + span {
-      color: #0284c7;
-      font-weight: 700;
+      color: var(--asturien);
+      font-weight: 800;
     }
 
     .pack-item-controls {
@@ -377,11 +401,11 @@
       background: var(--card-bg);
       border: 1px solid var(--border);
       border-radius: 12px;
-      padding: 18px;
+      padding: 20px;
       box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
     }
 
-    .info-card h3 { font-size: 1.1rem; color: var(--text-main); margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+    .info-card h3 { font-size: 1.15rem; color: var(--camino-blue); margin-bottom: 12px; display: flex; align-items: center; gap: 8px; font-weight: 800; }
 
     @media (max-width: 860px) {
       .table-wrapper { display: none; }
@@ -406,7 +430,7 @@
     <div id="plan-tab" class="tab-content active">
       <header>
         <div class="title-group">
-          <h1>🟡 Camino Primitivo — Travel Companion</h1>
+          <h1>🐚 Camino Primitivo — Travel Companion</h1>
           <p>04.09.2026 – 22.09.2026 • Interaktiver Etappen-, Flug- & Ausflugsplaner</p>
         </div>
         <div class="stats-bar">
@@ -863,7 +887,7 @@
             div.innerHTML = `
               <div class="pack-item-info">
                 <input type="number" min="0" max="99" class="qty-input" placeholder="0" value="${rawQty}" onchange="updatePackQty(${item.id}, this.value)" oninput="updatePackQty(${item.id}, this.value)">
-                <span style="${numQty > 0 ? 'font-weight:600; color:var(--text-main);' : 'color:var(--text-muted);'}">${item.name}</span>
+                <span style="${numQty > 0 ? 'font-weight:700; color:var(--text-main);' : 'color:var(--text-muted);'}">${item.name}</span>
               </div>
               <div class="pack-item-controls">
                 <label class="worn-label">
@@ -953,19 +977,19 @@
       };
 
       const waypoints = [
-        { name: "Oviedo", lat: 43.3619, lng: -5.8494, date: "05.09. & 06.09.", info: "Ankunft per Bus aus León | 🏨 La Hospederia<br>Start Kathedrale Oviedo", region: "Asturien", color: "#7c3aed", ele: 230 },
-        { name: "Grado", lat: 43.3889, lng: -6.0718, date: "06.09. (Etappe 1)", info: "Etappe 1: 26,5 km | 620 hm ↑", region: "Asturien", color: "#0284c7", ele: 60 },
-        { name: "Salas", lat: 43.4131, lng: -6.2597, date: "07.09. (Etappe 2)", info: "Etappe 2: 22,1 km | 490 hm ↑", region: "Asturien", color: "#0284c7", ele: 240 },
-        { name: "Tineo", lat: 43.3364, lng: -6.4158, date: "08.09. (Etappe 3)", info: "Etappe 3: 19,9 km | 780 hm ↑", region: "Asturien", color: "#0284c7", ele: 675 },
-        { name: "Borres", lat: 43.3258, lng: -6.5369, date: "09.09. (Etappe 4)", info: "Etappe 4: 15,7 km | 520 hm ↑", region: "Asturien", color: "#0284c7", ele: 630 },
-        { name: "Berducedo", lat: 43.2758, lng: -6.8394, date: "10.09. (Etappe 5)", info: "Etappe 5 (Königsetappe): 24,6 km | 1.100 hm ↑ (via Hospitales - Pass 1.140 m)", region: "Königsetappe", color: "#e11d48", ele: 900 },
-        { name: "Grandas de Salime", lat: 43.2147, lng: -6.9208, date: "11.09. (Etappe 6)", info: "Etappe 6: 20,3 km | 320 hm ↑ (Embalse de Salime 220 m)", region: "Asturien", color: "#0284c7", ele: 562 },
-        { name: "A Fonsagrada", lat: 43.1256, lng: -7.0700, date: "12.09. (Etappe 7)", info: "Etappe 7: 25,7 km | 930 hm ↑ (Puerto del Acebo 1.030 m)", region: "Galicien", color: "#059669", ele: 950 },
-        { name: "O Cádavo", lat: 43.0189, lng: -7.3061, date: "13.09. (Etappe 8)", info: "Etappe 8: 24,4 km | 610 hm ↑ (Alto da Vaqueriza 910 m)", region: "Galicien", color: "#059669", ele: 710 },
-        { name: "Lugo", lat: 43.0097, lng: -7.5568, date: "14.09. (Etappe 9)", info: "Etappe 9: 30,6 km | 480 hm ↑ (Römische Stadtmauer)", region: "Galicien", color: "#059669", ele: 465 },
-        { name: "Ferreira", lat: 42.9231, lng: -7.8089, date: "15.09. (Etappe 10)", info: "Etappe 10: 27,1 km | 380 hm ↑", region: "Galicien", color: "#059669", ele: 450 },
-        { name: "Boente", lat: 42.8683, lng: -8.0125, date: "16.09. (Etappe 11)", info: "Etappe 11: 26,0 km | 420 hm ↑ (Einmündung Camino Francés)", region: "Galicien", color: "#059669", ele: 360 },
-        { name: "A Rúa", lat: 42.9036, lng: -8.3183, date: "17.09. (Etappe 12)", info: "Etappe 12: 26,2 km | 340 hm ↑", region: "Galicien", color: "#059669", ele: 310 },
+        { name: "Oviedo", lat: 43.3619, lng: -5.8494, date: "05.09. & 06.09.", info: "Ankunft per Bus aus León | 🏨 La Hospederia<br>Start Kathedrale Oviedo", region: "Asturien", color: "#6b21a8", ele: 230 },
+        { name: "Grado", lat: 43.3889, lng: -6.0718, date: "06.09. (Etappe 1)", info: "Etappe 1: 26,5 km | 620 hm ↑", region: "Asturien", color: "#0369a1", ele: 60 },
+        { name: "Salas", lat: 43.4131, lng: -6.2597, date: "07.09. (Etappe 2)", info: "Etappe 2: 22,1 km | 490 hm ↑", region: "Asturien", color: "#0369a1", ele: 240 },
+        { name: "Tineo", lat: 43.3364, lng: -6.4158, date: "08.09. (Etappe 3)", info: "Etappe 3: 19,9 km | 780 hm ↑", region: "Asturien", color: "#0369a1", ele: 675 },
+        { name: "Borres", lat: 43.3258, lng: -6.5369, date: "09.09. (Etappe 4)", info: "Etappe 4: 15,7 km | 520 hm ↑", region: "Asturien", color: "#0369a1", ele: 630 },
+        { name: "Berducedo", lat: 43.2758, lng: -6.8394, date: "10.09. (Etappe 5)", info: "Etappe 5 (Königsetappe): 24,6 km | 1.100 hm ↑ (via Hospitales - Pass 1.140 m)", region: "Königsetappe", color: "#be123c", ele: 900 },
+        { name: "Grandas de Salime", lat: 43.2147, lng: -6.9208, date: "11.09. (Etappe 6)", info: "Etappe 6: 20,3 km | 320 hm ↑ (Embalse de Salime 220 m)", region: "Asturien", color: "#0369a1", ele: 562 },
+        { name: "A Fonsagrada", lat: 43.1256, lng: -7.0700, date: "12.09. (Etappe 7)", info: "Etappe 7: 25,7 km | 930 hm ↑ (Puerto del Acebo 1.030 m)", region: "Galicien", color: "#047857", ele: 950 },
+        { name: "O Cádavo", lat: 43.0189, lng: -7.3061, date: "13.09. (Etappe 8)", info: "Etappe 8: 24,4 km | 610 hm ↑ (Alto da Vaqueriza 910 m)", region: "Galicien", color: "#047857", ele: 710 },
+        { name: "Lugo", lat: 43.0097, lng: -7.5568, date: "14.09. (Etappe 9)", info: "Etappe 9: 30,6 km | 480 hm ↑ (Römische Stadtmauer)", region: "Galicien", color: "#047857", ele: 465 },
+        { name: "Ferreira", lat: 42.9231, lng: -7.8089, date: "15.09. (Etappe 10)", info: "Etappe 10: 27,1 km | 380 hm ↑", region: "Galicien", color: "#047857", ele: 450 },
+        { name: "Boente", lat: 42.8683, lng: -8.0125, date: "16.09. (Etappe 11)", info: "Etappe 11: 26,0 km | 420 hm ↑ (Einmündung Camino Francés)", region: "Galicien", color: "#047857", ele: 360 },
+        { name: "A Rúa", lat: 42.9036, lng: -8.3183, date: "17.09. (Etappe 12)", info: "Etappe 12: 26,2 km | 340 hm ↑", region: "Galicien", color: "#047857", ele: 310 },
         { name: "Santiago de Compostela", lat: 42.8805, lng: -8.5457, date: "18.09. & 21.09.", info: "Kathedrale Santiago<br>🏡 Nacht 1: 18.09. (Fr)<br>🚌 Ausflug Fisterra: 19.09. - 21.09.<br>🏡 Letzte Nacht: 21.09. (Mo)<br>✈️ Rückflug: 22.09. (Di)", region: "Ziel", color: "#ca8a04", ele: 260 }
       ];
 
@@ -994,32 +1018,32 @@
 
         const popupContent = `
           <div style="color: #0f172a; font-family: 'Plus Jakarta Sans', sans-serif; min-width: 210px; padding: 2px;">
-            <div style="font-size: 0.75rem; font-weight: 700; color: ${wp.color}; text-transform: uppercase; margin-bottom: 2px;">${wp.date}</div>
-            <h3 style="margin: 0 0 8px 0; font-size: 1.05rem; color: #0f172a; border-bottom: 1px solid #e2e8f0; padding-bottom: 4px;">
+            <div style="font-size: 0.75rem; font-weight: 800; color: ${wp.color}; text-transform: uppercase; margin-bottom: 2px;">${wp.date}</div>
+            <h3 style="margin: 0 0 8px 0; font-size: 1.05rem; color: #1e3a8a; border-bottom: 1px solid #e2e8f0; padding-bottom: 4px; font-weight: 800;">
               ${index === 0 ? '🏁 Start Camino' : (index === waypoints.length - 1 ? '🎉 Ziel Santiago' : 'Etappe ' + index)}: ${wp.name}
             </h3>
             <div style="font-size: 0.85rem; margin-bottom: 6px; line-height: 1.3; color: #334155;">${wp.info}</div>
-            <div style="font-size: 0.82rem; color: #64748b;"><strong>📍 Seehöhe:</strong> ca. ${wp.ele} m.ü.NHN</div>
+            <div style="font-size: 0.82rem; color: #52525b;"><strong>📍 Seehöhe:</strong> ca. ${wp.ele} m.ü.NHN</div>
           </div>
         `;
 
         L.circleMarker(pt, {
           color: wp.color,
           fillColor: wp.color,
-          fillOpacity: 0.85,
+          fillOpacity: 0.9,
           radius: index === 0 || index === waypoints.length - 1 || wp.region === 'Königsetappe' ? 9 : 6,
           weight: 2
         }).addTo(map).bindPopup(popupContent);
       });
 
-      L.polyline(latlngs, { color: '#d97706', weight: 4, opacity: 0.85, dashArray: '6, 8' }).addTo(map);
+      L.polyline(latlngs, { color: '#ca8a04', weight: 4, opacity: 0.9, dashArray: '6, 8' }).addTo(map);
 
       Object.keys(intlPoints).forEach(key => {
         const p = intlPoints[key];
         const pt = [p.lat, p.lng];
         allBounds.push(pt);
 
-        const markerColor = key === 'fisterra' ? '#0891b2' : '#7c3aed';
+        const markerColor = key === 'fisterra' ? '#0e7490' : '#6b21a8';
 
         L.circleMarker(pt, {
           color: markerColor,
@@ -1029,27 +1053,25 @@
           weight: 2
         }).addTo(map).bindPopup(`
           <div style="color: #0f172a; font-family: 'Plus Jakarta Sans', sans-serif; min-width: 200px;">
-            <h3 style="margin: 0 0 6px 0; font-size: 1rem; border-bottom: 1px solid #e2e8f0; padding-bottom: 4px; color: ${key === 'fisterra' ? '#0891b2' : '#7c3aed'};">📍 ${p.name}</h3>
+            <h3 style="margin: 0 0 6px 0; font-size: 1rem; border-bottom: 1px solid #e2e8f0; padding-bottom: 4px; color: ${key === 'fisterra' ? '#0e7490' : '#6b21a8'}; font-weight:800;">📍 ${p.name}</h3>
             <div style="font-size: 0.85rem; color: #334155; line-height: 1.4;">${p.desc}</div>
           </div>
         `);
       });
 
-      L.polyline([[intlPoints.muenchen.lat, intlPoints.muenchen.lng], [intlPoints.madrid.lat, intlPoints.madrid.lng]], { color: '#7c3aed', weight: 2, opacity: 0.8, dashArray: '4, 8' }).addTo(map);
-      L.polyline([[intlPoints.madrid.lat, intlPoints.madrid.lng], [intlPoints.leon.lat, intlPoints.leon.lng]], { color: '#0284c7', weight: 3, opacity: 0.8 }).addTo(map);
-      L.polyline([[intlPoints.leon.lat, intlPoints.leon.lng], [waypoints[0].lat, waypoints[0].lng]], { color: '#0284c7', weight: 3, opacity: 0.8 }).addTo(map);
-      L.polyline([[waypoints[waypoints.length-1].lat, waypoints[waypoints.length-1].lng], [intlPoints.fisterra.lat, intlPoints.fisterra.lng]], { color: '#0891b2', weight: 3, opacity: 0.9, dashArray: '5, 5' }).addTo(map);
-      L.polyline([[waypoints[waypoints.length-1].lat, waypoints[waypoints.length-1].lng], [intlPoints.madrid.lat, intlPoints.madrid.lng]], { color: '#e11d48', weight: 2, opacity: 0.8, dashArray: '4, 8' }).addTo(map);
-      L.polyline([[intlPoints.madrid.lat, intlPoints.madrid.lng], [intlPoints.muenchen.lat, intlPoints.muenchen.lng]], { color: '#e11d48', weight: 2, opacity: 0.8, dashArray: '4, 8' }).addTo(map);
+      L.polyline([[intlPoints.muenchen.lat, intlPoints.muenchen.lng], [intlPoints.madrid.lat, intlPoints.madrid.lng]], { color: '#6b21a8', weight: 2, opacity: 0.8, dashArray: '4, 8' }).addTo(map);
+      L.polyline([[intlPoints.madrid.lat, intlPoints.madrid.lng], [intlPoints.leon.lat, intlPoints.leon.lng]], { color: '#0369a1', weight: 3, opacity: 0.8 }).addTo(map);
+      L.polyline([[intlPoints.leon.lat, intlPoints.leon.lng], [waypoints[0].lat, waypoints[0].lng]], { color: '#0369a1', weight: 3, opacity: 0.8 }).addTo(map);
+      L.polyline([[waypoints[waypoints.length-1].lat, waypoints[waypoints.length-1].lng], [intlPoints.fisterra.lat, intlPoints.fisterra.lng]], { color: '#0e7490', weight: 3, opacity: 0.9, dashArray: '5, 5' }).addTo(map);
+      L.polyline([[waypoints[waypoints.length-1].lat, waypoints[waypoints.length-1].lng], [intlPoints.madrid.lat, intlPoints.madrid.lng]], { color: '#be123c', weight: 2, opacity: 0.8, dashArray: '4, 8' }).addTo(map);
+      L.polyline([[intlPoints.madrid.lat, intlPoints.madrid.lng], [intlPoints.muenchen.lat, intlPoints.muenchen.lng]], { color: '#be123c', weight: 2, opacity: 0.8, dashArray: '4, 8' }).addTo(map);
 
       map.fitBounds(allBounds, { padding: [30, 30] });
 
-      /* ECHTES HÖHENPROFIL (SEEHÖHE ENTLANG DER ROUTE MIT PASS-HIGHLIGHTS) */
       const chartCanvas = document.getElementById('elevationChart');
       if (chartCanvas) {
         const ctx = chartCanvas.getContext('2d');
         
-        // Vollständiger Höhenverlauf inklusive relevanter Pässe/Täler
         const profileLabels = [
           'Oviedo', 'Grado', 'Salas', 'Tineo', 'Borres', 
           'Hospitales (Pass 1140m)', 'Berducedo', 'Stausee Salime (220m)', 'Grandas', 
@@ -1071,13 +1093,13 @@
             datasets: [{
               label: 'Seehöhe (m.ü.NHN)',
               data: profileData,
-              borderColor: '#0284c7',
-              backgroundColor: 'rgba(2, 132, 199, 0.18)',
+              borderColor: '#1e3a8a',
+              backgroundColor: 'rgba(30, 58, 138, 0.15)',
               fill: true,
               tension: 0.35,
               pointRadius: 4,
               pointHoverRadius: 6,
-              pointBackgroundColor: '#0284c7'
+              pointBackgroundColor: '#ca8a04'
             }]
           },
           options: {
@@ -1096,15 +1118,15 @@
             scales: {
               x: { 
                 ticks: { 
-                  color: '#64748b', 
-                  font: { size: 9 },
+                  color: '#52525b', 
+                  font: { size: 9, weight: '600' },
                   maxRotation: 45,
                   minRotation: 30
                 } 
               },
               y: { 
-                title: { display: true, text: 'Höhe (Meter)', color: '#64748b', font: { size: 10 } },
-                ticks: { color: '#64748b' }, 
+                title: { display: true, text: 'Höhe (Meter)', color: '#1e3a8a', font: { size: 10, weight: '700' } },
+                ticks: { color: '#52525b', font: { weight: '600' } }, 
                 grid: { color: '#e2e8f0' } 
               }
             }
