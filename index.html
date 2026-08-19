@@ -4,13 +4,18 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Camino Primitivo 2026 — Ultimate Travel Companion</title>
-  
+
+  <!-- PWA & Mobile Web App Meta -->
+  <meta name="theme-color" content="#1e3a8a">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
   <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  
-  <!-- Leaflet CSS & JS -->
+
+  <!-- Leaflet CSS & JS für die Karte -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
@@ -19,37 +24,37 @@
 
   <style>
     /* ==========================================================================
-       1. JAKOBSWEG-DESIGN & FARBPALETTE (OPTIMIERTE LESBARKEIT)
+       1. FARBEN & DESIGNEINSTELLUNGEN (CAMINO PRIMITIVO PALETTE)
        ========================================================================== */
     :root {
-      /* Warmes, leicht sandiges Hellgrau/Beige für Pilger-Atmosphäre */
-      --bg: #f5f3ef;           
+      --bg: #f5f3ef;           /* Sandiges Hellbeige für Pilger-Atmosphäre */
       --card-bg: #ffffff;      /* Schneeweiß für maximalen Text-Kontrast */
+      --card-bg-hover: #fdfbf7;
       --border: #dcd6cd;       /* Sanfter Erdton für Trennlinien */
       
-      /* Typografie: Sehr dunkler Slate/Fast-Schwarz für beste Lesbarkeit */
-      --text: #1e293b;         
       --text-main: #0f172a;    
+      --text: #1e293b;         
       --text-muted: #52525b;   
-
-      /* Offizielle Jakobsweg-Farben */
-      --camino-blue: #1e3a8a;  /* Tiefes Königsblau (Jakobsweg-Hintergrund) */
-      --camino-yellow: #ca8a04;/* Kräftiges Jakobs-Gelb */
-      --camino-yellow-light: #fef08a;
-
-      --primary: #1e3a8a;      
-      --primary-rgb: 30, 58, 138;
       
-      /* Etappen-Farben */
-      --asturien: #0369a1;     /* Kräftiges Ozeanblau */
-      --galicien: #047857;     /* Sattes Waldgrün */
-      --anreise: #6b21a8;      /* Purpur */
-      --fisterra: #0e7490;     /* Atlantik-Cyan */
-      --koenigsetappe: #be123c;/* Rubinrot für Hospitales */
-      --ziel: #854d0e;         /* Kathedralen-Gold/Braun */
+      /* Jakobsweg-Farben */
+      --primary: #1e3a8a;      /* Tiefes Jakobsweg Königsblau */
+      --primary-hover: #1e40af;
+      --primary-rgb: 30, 58, 138;
+      --accent: #ca8a04;       /* Kräftiges Jakobs-Gelb / Gold */
+      
+      --asturien: #0369a1;     
+      --galicien: #047857;     
+      --anreise: #6b21a8;      
+      --fisterra: #0e7490;     
+      --koenigsetappe: #be123c;
+      --danger: #dc2626;
     }
 
-    * { box-sizing: border-box; margin: 0; padding: 0; }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
 
     body {
       font-family: 'Plus Jakarta Sans', sans-serif;
@@ -59,68 +64,55 @@
       padding: 24px 16px;
     }
 
-    .container { max-width: 1280px; margin: 0 auto; }
-
-    /* Tab Nav */
-    .tab-nav {
-      display: flex;
-      gap: 10px;
-      margin-bottom: 24px;
-      border-bottom: 3px solid var(--camino-yellow);
-      padding-bottom: 12px;
-      overflow-x: auto;
+    .container {
+      max-width: 1280px;
+      margin: 0 auto;
     }
-
-    .tab-btn {
-      background: var(--card-bg);
-      border: 1px solid var(--border);
-      color: var(--text-muted);
-      padding: 11px 20px;
-      border-radius: 8px;
-      cursor: pointer;
-      font-size: 0.95rem;
-      font-weight: 700;
-      transition: all 0.2s ease;
-      white-space: nowrap;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      box-shadow: 0 1px 2px rgba(0,0,0,0.04);
-    }
-
-    .tab-btn:hover { color: var(--camino-blue); border-color: var(--camino-blue); }
-    .tab-btn.active {
-      background: var(--camino-blue);
-      color: #ffffff;
-      border-color: var(--camino-blue);
-    }
-
-    .tab-content { display: none; }
-    .tab-content.active { display: block; }
 
     header {
-      margin-bottom: 24px;
+      margin-bottom: 20px;
       display: flex;
       flex-wrap: wrap;
       justify-content: space-between;
       align-items: flex-end;
       gap: 16px;
-      border-bottom: 1px solid var(--border);
+      border-bottom: 3px solid var(--accent);
       padding-bottom: 20px;
     }
 
     .title-group h1 {
-      font-size: 1.9rem;
+      font-size: 1.85rem;
       font-weight: 800;
-      color: var(--camino-blue);
+      color: var(--primary);
       display: flex;
       align-items: center;
       gap: 10px;
     }
 
-    .title-group p { color: var(--text-muted); font-size: 0.95rem; margin-top: 4px; font-weight: 500; }
+    .title-group p {
+      color: var(--text-muted);
+      font-size: 0.95rem;
+      margin-top: 4px;
+      font-weight: 500;
+    }
 
-    .stats-bar { display: flex; gap: 10px; flex-wrap: wrap; }
+    .countdown-badge {
+      display: inline-block;
+      margin-top: 8px;
+      background: rgba(var(--primary-rgb), 0.1);
+      border: 1px solid var(--primary);
+      color: var(--primary);
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 0.85rem;
+      font-weight: 700;
+    }
+
+    .stats-bar {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
 
     .stat-pill {
       background: var(--card-bg);
@@ -129,37 +121,78 @@
       border-radius: 9999px;
       font-size: 0.85rem;
       color: var(--text-main);
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
       font-weight: 600;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
     }
 
-    .stat-pill strong { color: var(--camino-yellow); font-weight: 800; }
+    .stat-pill strong { color: var(--accent); font-weight: 800; }
 
-    /* Map & Elevation Section */
-    .map-section {
+    /* Main Navigation Tabs */
+    .nav-tabs {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 20px;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 10px;
+      overflow-x: auto;
+    }
+
+    .tab-btn {
       background: var(--card-bg);
       border: 1px solid var(--border);
-      border-top: 4px solid var(--camino-yellow);
+      color: var(--text-muted);
+      padding: 10px 18px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 0.9rem;
+      font-weight: 700;
+      transition: all 0.2s ease;
+      white-space: nowrap;
+    }
+
+    .tab-btn.active, .tab-btn:hover {
+      background: var(--primary);
+      border-color: var(--primary);
+      color: #ffffff;
+    }
+
+    .tab-content {
+      display: none;
+    }
+
+    .tab-content.active {
+      display: block;
+    }
+
+    /* Kartenansicht */
+    .map-section {
+      margin-bottom: 24px;
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-top: 4px solid var(--accent);
       border-radius: 12px;
       padding: 20px;
-      margin-bottom: 24px;
       box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+      position: relative;
     }
 
     .map-section h2 {
-      font-size: 1.25rem;
+      font-size: 1.3rem;
       font-weight: 800;
-      color: var(--camino-blue);
+      color: var(--primary);
       margin-bottom: 16px;
       display: flex;
       align-items: center;
       gap: 8px;
     }
 
-    #map { height: 480px; width: 100%; border-radius: 8px; z-index: 1; border: 1px solid var(--border); }
+    #map {
+      height: 480px;
+      width: 100%;
+      border-radius: 8px;
+      z-index: 1;
+      border: 1px solid var(--border);
+    }
 
     .chart-container {
       margin-top: 20px;
@@ -171,8 +204,44 @@
       position: relative;
     }
 
-    /* Controls & Table */
-    .controls { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 20px; }
+    /* Map Legend Overlay */
+    .map-legend {
+      background: var(--card-bg);
+      color: var(--text-main);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 10px 14px;
+      font-size: 0.78rem;
+      line-height: 1.6;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+
+    .legend-title {
+      font-weight: 800;
+      margin-bottom: 4px;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 2px;
+      color: var(--primary);
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .legend-color-dot {
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+    }
+
+    .controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-bottom: 24px;
+    }
 
     .search-input {
       flex: 1;
@@ -188,7 +257,10 @@
       font-weight: 500;
     }
 
-    .search-input:focus { border-color: var(--camino-blue); box-shadow: 0 0 0 2px rgba(30, 58, 138, 0.15); }
+    .search-input:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 2px rgba(var(--primary-rgb), 0.15);
+    }
 
     .filter-btn {
       background: var(--card-bg);
@@ -203,8 +275,8 @@
     }
 
     .filter-btn:hover, .filter-btn.active {
-      background: var(--camino-blue);
-      border-color: var(--camino-blue);
+      background: var(--primary);
+      border-color: var(--primary);
       color: #ffffff;
     }
 
@@ -216,11 +288,16 @@
       box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
     }
 
-    table { width: 100%; border-collapse: collapse; text-align: left; font-size: 0.9rem; }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+      font-size: 0.9rem;
+    }
 
     th {
       background: #eae6df;
-      color: var(--camino-blue);
+      color: var(--primary);
       font-weight: 800;
       text-transform: uppercase;
       font-size: 0.75rem;
@@ -230,17 +307,29 @@
       white-space: nowrap;
     }
 
-    td { padding: 14px 16px; border-bottom: 1px solid var(--border); vertical-align: top; color: var(--text-main); }
-    tr:last-child td { border-bottom: none; }
-    tr:hover td { background: #fdfbf7; }
+    td {
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--border);
+      vertical-align: middle;
+      color: var(--text-main);
+    }
+
+    tr.clickable-row {
+      cursor: pointer;
+      transition: background 0.15s ease;
+    }
+
+    tr.clickable-row:hover td {
+      background: var(--card-bg-hover) !important;
+    }
 
     .day-badge {
       display: inline-flex;
       align-items: center;
       justify-content: center;
       font-weight: 800;
-      color: var(--camino-blue);
-      background: var(--camino-yellow-light);
+      color: var(--primary);
+      background: #fef08a;
       border: 1px solid #fef08a;
       border-radius: 6px;
       padding: 2px 8px;
@@ -256,113 +345,198 @@
       text-transform: uppercase;
     }
 
-    .tag-anreise { background: #f3e8ff; color: var(--anreise); }
     .tag-asturien { background: #e0f2fe; color: var(--asturien); }
     .tag-galicien { background: #d1fae5; color: var(--galicien); }
+    .tag-anreise { background: #f3e8ff; color: var(--anreise); }
     .tag-fisterra { background: #cff4fc; color: var(--fisterra); }
     .tag-koenig { background: #ffe4e6; color: var(--koenigsetappe); }
-    .tag-ziel { background: #fef9c3; color: var(--ziel); }
+    .tag-ziel { background: #fef9c3; color: var(--accent); }
 
-    .route-title { font-weight: 700; color: var(--text-main); margin-bottom: 2px; }
-    .sub-note { font-size: 0.82rem; color: var(--text-muted); margin-top: 2px; line-height: 1.4; }
+    .route-title {
+      font-weight: 700;
+      color: var(--text-main);
+      margin-bottom: 4px;
+    }
 
-    .dist-pill, .elevation-pill, .transport-pill, .hotel-pill, .action-btn {
+    .sub-note {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      margin-top: 4px;
+      line-height: 1.4;
+    }
+
+    .transport-pill, .hotel-pill {
       display: inline-flex;
       align-items: center;
-      gap: 5px;
+      gap: 6px;
       font-size: 0.8rem;
       padding: 4px 9px;
       border-radius: 6px;
-      background: #f1f5f9;
+      background: #f8fafc;
       color: var(--text-main);
       font-weight: 600;
-      text-decoration: none;
       border: 1px solid var(--border);
-      cursor: pointer;
     }
 
-    .dist-pill { font-weight: 700; background: #f8fafc; }
-    .hotel-pill { background: #fffbeb; color: #92400e; border-color: #fef3c7; }
-    .transport-pill { background: #f3e8ff; color: #6b21a8; border-color: #e9d5ff; }
-    .action-btn { background: #ecfdf5; color: #047857; border-color: #a7f3d0; transition: all 0.2s; }
-    .action-btn:hover { background: #d1fae5; }
+    .hotel-pill {
+      background: #fffbeb;
+      border-color: #fef3c7;
+      color: #92400e;
+    }
 
-    .packing-grid {
+    /* Grid Layouts für Tabs */
+    .grid-2 {
       display: grid;
-      grid-template-columns: 1fr;
-      gap: 16px;
-      margin-top: 16px;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 20px;
     }
 
-    .packing-card {
+    .info-card {
       background: var(--card-bg);
       border: 1px solid var(--border);
       border-radius: 12px;
-      padding: 18px;
+      padding: 20px;
+      margin-bottom: 20px;
       box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
     }
 
-    .packing-card h3 {
-      font-size: 1.1rem;
-      color: var(--camino-blue);
+    .info-card h3 {
+      color: var(--primary);
+      font-size: 1.15rem;
       margin-bottom: 12px;
       display: flex;
+      align-items: center;
       justify-content: space-between;
       border-bottom: 2px solid var(--bg);
-      padding-bottom: 6px;
+      padding-bottom: 8px;
       font-weight: 800;
     }
 
-    .subcat-header {
-      font-size: 0.85rem;
-      font-weight: 800;
-      color: var(--camino-blue);
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-      background: #f1f5f9;
-      padding: 5px 10px;
-      border-radius: 4px;
-      margin: 14px 0 6px 0;
-      border-left: 3px solid var(--camino-yellow);
-    }
-
-    .weight-tag { font-size: 0.8rem; color: var(--text-muted); font-weight: 700; }
-
-    .pack-item-row {
+    /* Packliste Styles */
+    .pack-summary {
       display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+      background: rgba(30, 58, 138, 0.06);
+      border: 1px solid var(--primary);
+      padding: 16px;
+      border-radius: 10px;
+      margin-bottom: 20px;
       align-items: center;
       justify-content: space-between;
-      gap: 10px;
-      padding: 7px 0;
-      border-bottom: 1px dashed var(--border);
-      flex-wrap: wrap;
     }
 
-    .pack-item-info {
+    .pack-summary-stat {
       display: flex;
-      align-items: center;
-      gap: 10px;
-      flex: 1;
-      min-width: 220px;
+      flex-direction: column;
     }
 
-    .qty-input {
-      width: 52px;
-      padding: 4px 6px;
+    .pack-summary-val {
+      font-size: 1.4rem;
+      font-weight: 800;
+      color: var(--primary);
+    }
+
+    .pack-summary-lbl {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      font-weight: 600;
+    }
+
+    .pack-add-form {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 20px;
+      background: #eae6df;
+      padding: 12px;
+      border-radius: 8px;
       border: 1px solid var(--border);
-      border-radius: 6px;
-      text-align: center;
-      font-family: inherit;
-      font-size: 0.88rem;
-      font-weight: 700;
-      background: var(--bg);
-      color: var(--text-main);
     }
 
-    .qty-input:focus {
+    .pack-add-form input, .pack-add-form select {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      color: var(--text-main);
+      padding: 8px 12px;
+      border-radius: 6px;
+      font-size: 0.85rem;
       outline: none;
-      border-color: var(--camino-blue);
+      font-weight: 500;
     }
+
+    .pack-add-form input[type="text"] { flex: 2; min-width: 160px; }
+    .pack-add-form select { flex: 1.5; min-width: 180px; }
+    .pack-add-form input[type="number"] { width: 100px; }
+
+    .btn-add {
+      background: var(--primary);
+      color: #ffffff;
+      font-weight: 700;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: opacity 0.15s ease;
+    }
+
+    .btn-add:hover { opacity: 0.9; }
+
+    .btn-reset {
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      padding: 6px 12px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 0.8rem;
+      font-weight: 600;
+    }
+
+    .btn-reset:hover { border-color: var(--danger); color: var(--danger); }
+
+    .qty-controls {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: #f1f5f9;
+      border-radius: 6px;
+      padding: 2px 6px;
+      border: 1px solid var(--border);
+    }
+
+    .qty-btn {
+      background: transparent;
+      border: none;
+      color: var(--text-main);
+      font-weight: bold;
+      cursor: pointer;
+      padding: 0 4px;
+    }
+
+    .qty-btn:hover { color: var(--primary); }
+
+    .pack-table-category {
+      background: #f1f5f9;
+      color: var(--primary);
+      font-weight: 800;
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      border-left: 3px solid var(--accent);
+    }
+
+    .btn-icon {
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      font-size: 0.9rem;
+      opacity: 0.8;
+      transition: opacity 0.15s ease;
+      padding: 2px 4px;
+    }
+
+    .btn-icon:hover { opacity: 1; }
 
     .worn-label {
       display: inline-flex;
@@ -376,7 +550,6 @@
       padding: 3px 8px;
       border-radius: 6px;
       border: 1px solid var(--border);
-      transition: all 0.2s;
       font-weight: 600;
     }
 
@@ -385,64 +558,52 @@
       font-weight: 800;
     }
 
-    .pack-item-controls {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-
-    .info-grid {
-      display: grid;
-      grid-template-columns: 1fr;
-      gap: 16px;
-    }
-
-    .info-card {
-      background: var(--card-bg);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 20px;
-      box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
-    }
-
-    .info-card h3 { font-size: 1.15rem; color: var(--camino-blue); margin-bottom: 12px; display: flex; align-items: center; gap: 8px; font-weight: 800; }
-
     @media (max-width: 860px) {
-      .table-wrapper { display: none; }
+      .table-wrapper-responsive { display: none; }
       .mobile-cards { display: flex; flex-direction: column; gap: 12px; }
-      .card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 10px; padding: 16px; }
+      .card {
+        background: var(--card-bg);
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        padding: 16px;
+        cursor: pointer;
+      }
       .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
     }
 
-    @media (min-width: 861px) { .mobile-cards { display: none; } }
+    @media (min-width: 861px) {
+      .mobile-cards { display: none; }
+    }
   </style>
 </head>
 <body>
   <div class="container">
-    
-    <div class="tab-nav">
-      <button class="tab-btn active" onclick="switchTab('plan-tab', this)">🗺️ Routenplaner & Karte</button>
-      <button class="tab-btn" onclick="switchTab('pack-tab', this)">🎒 Packliste & Rechner</button>
-      <button class="tab-btn" onclick="switchTab('info-tab', this)">🆘 Notfall & Sprach-Guide</button>
+    <header>
+      <div class="title-group">
+        <h1>🐚 Camino Primitivo — Travel Companion</h1>
+        <p>04.09.2026 – 22.09.2026 • 19 Tage Reisedauer</p>
+        <div class="countdown-badge" id="countdown">⏳ Countdown wird geladen...</div>
+      </div>
+      <div class="stats-bar">
+        <div class="stat-pill">📅 <strong>19</strong> Tage Gesamt</div>
+        <div class="stat-pill">🥾 <strong>13</strong> Etappen</div>
+        <div class="stat-pill">📏 <strong>309,9</strong> km</div>
+        <div class="stat-pill">⛰️ <strong>7.300</strong> hm</div>
+      </div>
+    </header>
+
+    <!-- TAB NAVIGATION -->
+    <div class="nav-tabs">
+      <button class="tab-btn active" onclick="switchTab('routeTab', this)">🗺️ Reiseroute & Karte</button>
+      <button class="tab-btn" onclick="switchTab('packTab', this)">🎒 Interaktive Packliste</button>
+      <button class="tab-btn" onclick="switchTab('infoTab', this)">🆘 Notfall & Sprach-Guide</button>
     </div>
 
-    <!-- ==================== TAB 1: ROUTENPLANER & KARTE ==================== -->
-    <div id="plan-tab" class="tab-content active">
-      <header>
-        <div class="title-group">
-          <h1>🐚 Camino Primitivo — Travel Companion</h1>
-          <p>04.09.2026 – 22.09.2026 • Interaktiver Etappen-, Flug- & Ausflugsplaner</p>
-        </div>
-        <div class="stats-bar">
-          <div class="stat-pill">📅 <strong>19</strong> Tage Gesamt</div>
-          <div class="stat-pill">🥾 <strong>13</strong> Etappen</div>
-          <div class="stat-pill">📏 <strong>309,9</strong> km</div>
-          <div class="stat-pill">⛰️ <strong>7.300</strong> hm</div>
-        </div>
-      </header>
-
+    <!-- TAB 1: REISEROUTE & KARTE -->
+    <div id="routeTab" class="tab-content active">
+      <!-- Karten-Sektion mit integriertem Höhenprofil -->
       <div class="map-section">
-        <h2>🗺️ Interaktive Karte & Echtes Höhenprofil (m.ü.NHN)</h2>
+        <h2>🗺️ Interaktive Routenkarte <span style="font-size:0.8rem; font-weight:normal; color:var(--text-muted);">(Tabelle anklicken zum Zoomen)</span></h2>
         <div id="map"></div>
         
         <div class="chart-container">
@@ -450,6 +611,7 @@
         </div>
       </div>
 
+      <!-- Suchfeld und Filter-Buttons -->
       <div class="controls">
         <input type="text" id="searchInput" class="search-input" placeholder="Nach Etappen, Orten, Flügen, Zügen, Fisterra oder Unterkünften suchen..." onkeyup="filterPlan()">
         <button class="filter-btn active" onclick="setFilter('all', this)">Alle Tage</button>
@@ -461,7 +623,8 @@
         <button class="filter-btn" onclick="setFilter('Abreise', this)">Heimreise</button>
       </div>
 
-      <div class="table-wrapper">
+      <!-- Desktop Ansicht (Tabelle) -->
+      <div class="table-wrapper table-wrapper-responsive">
         <table id="planTable">
           <thead>
             <tr>
@@ -474,53 +637,48 @@
               <th>Unterkunft</th>
             </tr>
           </thead>
-          <tbody id="tableBody"></tbody>
+          <tbody>
+            <!-- Dynamisch aus rawData befüllt -->
+          </tbody>
         </table>
       </div>
 
+      <!-- Mobile Cards Ansicht -->
       <div class="mobile-cards" id="mobileCards"></div>
     </div>
 
-    <!-- ==================== TAB 2: PACKLISTE & RECHNER ==================== -->
-    <div id="pack-tab" class="tab-content">
-      <header>
-        <div class="title-group">
-          <h1>🎒 Packliste & Gewichtsrechner</h1>
-          <p>Behalte die Kontrolle über dein Rucksackgewicht (Exakt nach deiner PDF-Ausrüstungsliste)</p>
-        </div>
-        <div class="stats-bar">
-          <div class="stat-pill">🎒 Im Rucksack: &nbsp;<strong id="packWeight">0,00</strong> kg</div>
-          <div class="stat-pill">👕 Am Körper: &nbsp;<strong id="wornWeight">0,00</strong> kg</div>
-          <div class="stat-pill">⚖️ Gesamt: &nbsp;<strong id="totalWeight">0,00</strong> kg</div>
-        </div>
-      </header>
+    <!-- TAB 2: PACKLISTE -->
+    <div id="packTab" class="tab-content">
+      <div class="info-card">
+        <h3>
+          <span>🎒 Interaktive Packliste & Gewichtsrechner</span>
+          <button class="btn-reset" onclick="resetPacklist()">🔄 Liste auf Standard zurücksetzen</button>
+        </h3>
 
-      <div class="packing-grid">
-        <div class="packing-card">
-          <h3><span>🎒 Tragesystem, Schlafen & Organisation</span> <span class="weight-tag" id="catWeight1">0.00 kg</span></h3>
-          <div id="packCat1"></div>
+        <!-- Zusammenfassungs-Dashboard -->
+        <div class="pack-summary">
+          <div class="pack-summary-stat">
+            <span class="pack-summary-val" id="totalWeightKg">0.00 kg</span>
+            <span class="pack-summary-lbl">Im Rucksack (Gepackt)</span>
+          </div>
+          <div class="pack-summary-stat">
+            <span class="pack-summary-val" id="wornWeightKg">0.00 kg</span>
+            <span class="pack-summary-lbl">Am Körper getragen</span>
+          </div>
+          <div class="pack-summary-stat">
+            <span class="pack-summary-val" id="grandTotalKg">0.00 kg</span>
+            <span class="pack-summary-lbl">Gesamtgewicht</span>
+          </div>
+          <div class="pack-summary-stat">
+            <span class="pack-summary-val" id="totalPackedItems">0 / 0</span>
+            <span class="pack-summary-lbl">Gegenstände ausgewählt</span>
+          </div>
         </div>
-        <div class="packing-card">
-          <h3><span>👕 Bekleidung, Ausrüstung & Schuhe</span> <span class="weight-tag" id="catWeight2">0.00 kg</span></h3>
-          <div id="packCat2"></div>
-        </div>
-        <div class="packing-card">
-          <h3><span>🔋 Elektronik & Navigation</span> <span class="weight-tag" id="catWeight3">0.00 kg</span></h3>
-          <div id="packCat3"></div>
-        </div>
-        <div class="packing-card">
-          <h3><span>🧴 Körperpflege, Medis & Dokumente</span> <span class="weight-tag" id="catWeight4">0.00 kg</span></h3>
-          <div id="packCat4"></div>
-        </div>
-      </div>
 
-      <!-- Formular: Neuer Gegenstand mit allen 14 Unterkategorien -->
-      <div class="packing-card" style="margin-top: 24px;">
-        <h3>➕ Neuen Gegenstand zur Packliste hinzufügen</h3>
-        <form onsubmit="addNewItem(event)" style="display: flex; gap: 12px; flex-wrap: wrap; margin-top: 12px; align-items: center;">
-          <input type="text" id="newItemName" placeholder="Gegenstand (z.B. Blasenpflaster XL)" required style="flex: 2; min-width: 200px; padding: 8px 12px; border: 1px solid var(--border); border-radius: 6px;">
-          
-          <select id="newItemCat" style="flex: 1.5; min-width: 200px; padding: 8px 12px; border: 1px solid var(--border); border-radius: 6px; background: var(--card-bg);">
+        <!-- Formular zum Hinzufügen neuer Gegenstände -->
+        <div class="pack-add-form">
+          <input type="text" id="newItemName" placeholder="Neuer Gegenstand (z.B. Blasenpflaster XL)">
+          <select id="newItemCat">
             <optgroup label="Tragesystem & Schlafen">
               <option value="1|Tragesystem & Schlafen">Tragesystem & Schlafen</option>
               <option value="1|Organisation & Ordnung">Organisation & Ordnung</option>
@@ -544,24 +702,36 @@
               <option value="4|Dokumente & Tagebuch">Dokumente & Tagebuch</option>
             </optgroup>
           </select>
-          
-          <input type="number" id="newItemWeight" placeholder="Gewicht (Gramm)" step="1" min="1" required style="width: 140px; padding: 8px 12px; border: 1px solid var(--border); border-radius: 6px;">
-          
-          <button type="submit" class="filter-btn active" style="padding: 8px 16px; cursor: pointer;">Hinzufügen</button>
-        </form>
+          <input type="number" id="newItemWeight" placeholder="Gramm" min="1">
+          <button class="btn-add" onclick="addPackItem()">+ Hinzufügen</button>
+        </div>
+
+        <!-- Packlisten Tabelle -->
+        <div class="table-wrapper">
+          <table id="packTable">
+            <thead>
+              <tr>
+                <th style="width: 40px; text-align:center;">Packen</th>
+                <th>Gegenstand</th>
+                <th>Kategorie</th>
+                <th style="width: 120px; text-align:center;">Am Körper</th>
+                <th style="width: 110px; text-align:center;">Anzahl</th>
+                <th style="width: 100px; text-align:right;">Gewicht (g)</th>
+                <th style="width: 100px; text-align:right;">Gesamt (g)</th>
+                <th style="width: 80px; text-align:center;">Aktionen</th>
+              </tr>
+            </thead>
+            <tbody id="packTableBody">
+              <!-- Dynamisch aus JS befüllt -->
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
 
-    <!-- ==================== TAB 3: NOTFALL & GUIDE ==================== -->
-    <div id="info-tab" class="tab-content">
-      <header>
-        <div class="title-group">
-          <h1>🆘 Notfall-Infos & Pilger-Sprachführer</h1>
-          <p>Die wichtigsten Telefonnummern und Spanisch-Vokabeln für unterwegs</p>
-        </div>
-      </header>
-
-      <div class="info-grid">
+    <!-- TAB 3: NOTFALL & GUIDE -->
+    <div id="infoTab" class="tab-content">
+      <div class="grid-2">
         <div class="info-card">
           <h3>🚨 Wichtige Notrufnummern</h3>
           <p style="margin-bottom: 8px;"><strong>112</strong> — Allgemeiner Notruf (EU, mehrsprachig)</p>
@@ -571,7 +741,6 @@
             💡 Tipp: Bei Notfällen auf der Hospitales-Route immer den Standort in Maps/GPS parat haben!
           </p>
         </div>
-
         <div class="info-card">
           <h3>🗣️ Spanisch für die Herberge</h3>
           <p style="margin-bottom: 6px;"><strong>¿Tiene una cama libre?</strong> — Haben Sie ein Bett frei?</p>
@@ -580,160 +749,309 @@
           <p style="margin-bottom: 6px;"><strong>¿Dónde puedo lavar la ropa?</strong> — Wo kann ich Wäsche waschen?</p>
           <p style="margin-bottom: 6px;"><strong>Menú del Peregrino</strong> — Pilgermenu (oft 10-12 € inkl. Wein)</p>
         </div>
-
-        <div class="info-card">
-          <h3>📲 Nützliche Apps & Links</h3>
-          <p style="margin-bottom: 8px;">• <strong>Camino Ninja / Gronze:</strong> Beste Herbergsübersichten</p>
-          <p style="margin-bottom: 8px;">• <strong>AlertCops:</strong> Offizielle spanische Sicherheits-App</p>
-          <p style="margin-bottom: 8px;">• <strong>Monbus.es:</strong> Busfahrpläne für Fisterra</p>
-        </div>
       </div>
     </div>
 
   </div>
 
-  <script>
-    const rawData = [
-      { id: "A1", badge: "Anreise", date: "04.09. (Fr)", region: "Anreise", title: "München ➔ Madrid ➔ León", desc: "Flug IB1310 um 12:10 Uhr ab MUC. Zug um 17:30 nach León (Ankunft 19:47).", transport: "✈️ IB1310 | 🚆 Zug (17:30)", hotel: "🏨 Leon Hostel Jabalquinto", km: 0, lat: 42.5987, lng: -5.5671, weatherLoc: "Leon,Spain" },
-      { id: "A2", badge: "Anreise", date: "05.09. (Sa)", region: "Anreise", title: "León ➔ Oviedo", desc: "Morgens Erkundung León. Busfahrt nach Oviedo & Akklimatisierung.", transport: "🚌 Fernbus", hotel: "🏨 La Hospederia", km: 0, lat: 43.3619, lng: -5.8494, weatherLoc: "Oviedo,Spain" },
-      { id: "E1", badge: "Etappe 1", date: "06.09. (So)", region: "Asturien", title: "Oviedo ➔ Grado", desc: "Auftaktetappe ab der Kathedrale Oviedo", transport: "📏 26,5 km | ⛰️ 620 hm", hotel: "🏡 Herberge / Pension", km: 26.5, lat: 43.3889, lng: -6.0718, weatherLoc: "Grado,Spain" },
-      { id: "E2", badge: "Etappe 2", date: "07.09. (Mo)", region: "Asturien", title: "Grado ➔ Salas", desc: "Malerische Täler, historisches Salas", transport: "📏 22,1 km | ⛰️ 490 hm", hotel: "🏡 Herberge / Pension", km: 22.1, lat: 43.4131, lng: -6.2597, weatherLoc: "Salas,Spain" },
-      { id: "E3", badge: "Etappe 3", date: "08.09. (Di)", region: "Asturien", title: "Salas ➔ Tineo", desc: "Stetiger Anstieg durch asturische Wälder", transport: "📏 19,9 km | ⛰️ 780 hm", hotel: "🏡 Herberge / Pension", km: 19.9, lat: 43.3364, lng: -6.4158, weatherLoc: "Tineo,Spain" },
-      { id: "E4", badge: "Etappe 4", date: "09.09. (Mi)", region: "Asturien", title: "Tineo ➔ Borres", desc: "Kürzere Etappe vor der Hospitales-Route", transport: "📏 15,7 km | ⛰️ 520 hm", hotel: "🏡 Herberge / Pension", km: 15.7, lat: 43.3258, lng: -6.5369, weatherLoc: "Tineo,Spain" },
-      { id: "E5", badge: "Etappe 5", date: "10.09. (Do)", region: "Asturien Königsetappe", title: "Borres ➔ Berducedo", desc: "<strong>KÖNIGSETAPPE:</strong> Über die Hospitales-Route (bei gutem Wetter!)", transport: "📏 24,6 km | ⛰️ 1.100 hm", hotel: "🏡 Herberge / Pension", km: 24.6, lat: 43.2758, lng: -6.8394, weatherLoc: "Allande,Spain" },
-      { id: "E6", badge: "Etappe 6", date: "11.09. (Fr)", region: "Asturien", title: "Berducedo ➔ Grandas de Salime", desc: "Abstieg zum Stausee Embalse de Salime", transport: "📏 20,3 km | ⛰️ 320 hm", hotel: "🏡 Herberge / Pension", km: 20.3, lat: 43.2147, lng: -6.9208, weatherLoc: "GrandasdeSalime,Spain" },
-      { id: "E7", badge: "Etappe 7", date: "12.09. (Sa)", region: "Galicien", title: "Grandas de Salime ➔ A Fonsagrada", desc: "Grenzübertritt von Asturien nach Galicien (Puerto del Acebo)", transport: "📏 25,7 km | ⛰️ 930 hm", hotel: "🏡 Herberge / Pension", km: 25.7, lat: 43.1256, lng: -7.0700, weatherLoc: "AFonsagrada,Spain" },
-      { id: "E8", badge: "Etappe 8", date: "13.09. (So)", region: "Galicien", title: "A Fonsagrada ➔ O Cádavo", desc: "Typisch galicische Landschaft", transport: "📏 24,4 km | ⛰️ 610 hm", hotel: "🏡 Herberge / Pension", km: 24.4, lat: 43.0189, lng: -7.3061, weatherLoc: "Baleira,Spain" },
-      { id: "E9", badge: "Etappe 9", date: "14.09. (Mo)", region: "Galicien", title: "O Cádavo ➔ Lugo", desc: "Ankunft in Lugo (Römische Stadtmauer)", transport: "📏 30,6 km | ⛰️ 480 hm", hotel: "🏡 Herberge / Pension", km: 30.6, lat: 43.0097, lng: -7.5568, weatherLoc: "Lugo,Spain" },
-      { id: "E10", badge: "Etappe 10", date: "15.09. (Di)", region: "Galicien", title: "Lugo ➔ Ferreira", desc: "Verlauf durch das galicische Hinterland", transport: "📏 27,1 km | ⛰️ 380 hm", hotel: "🏡 Herberge / Pension", km: 27.1, lat: 42.9231, lng: -7.8089, weatherLoc: "Guntin,Spain" },
-      { id: "E11", badge: "Etappe 11", date: "16.09. (Mi)", region: "Galicien", title: "Ferreira ➔ Boente", desc: "Einmündung auf den Camino Francés nahe Melide", transport: "📏 26,0 km | ⛰️ 420 hm", hotel: "🏡 Herberge / Pension", km: 26.0, lat: 42.8683, lng: -8.0125, weatherLoc: "Melide,Spain" },
-      { id: "E12", badge: "Etappe 12", date: "17.09. (Do)", region: "Galicien", title: "Boente ➔ A Rúa", desc: "Vorletzter Tag, mehr Betrieb auf dem Weg", transport: "📏 26,2 km | ⛰️ 340 hm", hotel: "🏡 Herberge / Pension", km: 26.2, lat: 42.9036, lng: -8.3183, weatherLoc: "Arzua,Spain" },
-      { id: "E13", badge: "Etappe 13", date: "18.09. (Fr)", region: "Galicien Ziel", title: "A Rúa ➔ Santiago de Compostela", desc: "<strong>CAMINO ZIEL!</strong> Ankunft an der Kathedrale, Compostela abholen.", transport: "📏 20,8 km | ⛰️ 310 hm", hotel: "🏨 Santiago (Nacht 1)", km: 20.8, lat: 42.8805, lng: -8.5457, weatherLoc: "SantiagodeCompostela,Spain" },
-      { id: "F1", badge: "Ausflug", date: "19.09. (Sa)", region: "Fisterra", title: "Santiago ➔ Fisterra", desc: "Busfahrt an die Atlantikküste / Ende der Welt. Sonnenuntergang Kap Fisterra.", transport: "🚌 Monbus (ca. 2 Std.)", hotel: "🏨 Unterkunft Fisterra", km: 0, lat: 42.9086, lng: -9.2632, weatherLoc: "Fisterra,Spain" },
-      { id: "F2", badge: "Ausflug", date: "20.09. (So)", region: "Fisterra", title: "Fisterra (Küste & Meer)", desc: "Entspannter Tag am Strand (Playa de Langosteira), Meeresfrüchte genießen.", transport: "🚶 Küstenweg & Strand", hotel: "🏨 Unterkunft Fisterra", km: 0, lat: 42.9086, lng: -9.2632, weatherLoc: "Fisterra,Spain" },
-      { id: "F3", badge: "Ausflug", date: "21.09. (Mo)", region: "Fisterra", title: "Fisterra ➔ Santiago", desc: "Rückfahrt nach Santiago. Letzter Abend im historischen Zentrum.", transport: "🚌 Monbus ➔ 🚶 Altstadt", hotel: "🏨 Santiago (Letzte Nacht)", km: 0, lat: 42.8805, lng: -8.5457, weatherLoc: "SantiagodeCompostela,Spain" },
-      { id: "R1", badge: "Abreise", date: "22.09. (Di)", region: "Abreise", title: "Santiago ➔ Madrid ➔ München", desc: "09:20 Uhr: IB518 nach Madrid T4. Transfer zu T2. 15:10 Uhr: UX1517 nach MUC.", transport: "✈️ IB518 ➔ Shuttle ➔ ✈️ UX1517", hotel: "🏠 Ankunft München", km: 0, lat: 48.3537, lng: 11.7861, weatherLoc: "Munich,Germany" }
-    ];
 
-    const packingData = [
-      { id: 1, cat: 1, subcat: "Tragesystem & Schlafen", name: "Trekkingrucksack (35 L)", weight: 1.000, qty: "", worn: false },
-      { id: 2, cat: 1, subcat: "Tragesystem & Schlafen", name: "Hüttenschlafsack Seide", weight: 0.179, qty: "", worn: false },
-      { id: 3, cat: 1, subcat: "Tragesystem & Schlafen", name: "Kissenbezug Seide", weight: 0.055, qty: "", worn: false },
-      { id: 4, cat: 1, subcat: "Organisation & Ordnung", name: "Packsäcke / Drybags (Set)", weight: 0.030, qty: "", worn: false },
-      { id: 5, cat: 1, subcat: "Organisation & Ordnung", name: "Umhängetasche", weight: 0.180, qty: "", worn: false },
-      { id: 6, cat: 1, subcat: "Organisation & Ordnung", name: "Kulturtbeutel leer", weight: 0.072, qty: "", worn: false },
-      { id: 7, cat: 1, subcat: "Organisation & Ordnung", name: "Zip Beutel für Cremes", weight: 0.020, qty: "", worn: false },
-      { id: 8, cat: 1, subcat: "Organisation & Ordnung", name: "Zip Beutel für Elektrozeugs", weight: 0.012, qty: "", worn: false },
-      { id: 9, cat: 2, subcat: "Bekleidung (Wandern)", name: "Wanderhose lang", weight: 0.366, qty: "", worn: false },
-      { id: 10, cat: 2, subcat: "Bekleidung (Wandern)", name: "Wanderhose kurz", weight: 0.262, qty: "", worn: false },
-      { id: 11, cat: 2, subcat: "Bekleidung (Wandern)", name: "Gürtel für Wanderhose", weight: 0.036, qty: "", worn: false },
-      { id: 12, cat: 2, subcat: "Bekleidung (Wandern)", name: "Funktions-T-Shirt (Merino)", weight: 0.135, qty: "", worn: false },
-      { id: 13, cat: 2, subcat: "Bekleidung (Wandern)", name: "Funktions-T-Shirt (Columbia)", weight: 0.150, qty: "", worn: false },
-      { id: 14, cat: 2, subcat: "Bekleidung (Wandern)", name: "Langarm-Sunhoodie (Midlayer)", weight: 0.200, qty: "", worn: false },
-      { id: 15, cat: 2, subcat: "Bekleidung (Wandern)", name: "Thermo Unterhemd Adidas", weight: 0.130, qty: "", worn: false },
-      { id: 16, cat: 2, subcat: "Bekleidung (Wandern)", name: "Tanktop Mikrofaser", weight: 0.050, qty: "", worn: false },
-      { id: 17, cat: 2, subcat: "Bekleidung (Wärme & Kälte)", name: "Fleecepullover für abends", weight: 0.251, qty: "", worn: false },
-      { id: 18, cat: 2, subcat: "Bekleidung (Wärme & Kälte)", name: "Warme Jacke Decathlon", weight: 0.500, qty: "", worn: false },
-      { id: 19, cat: 2, subcat: "Bekleidung (Wärme & Kälte)", name: "Handschuhe", weight: 0.028, qty: "", worn: false },
-      { id: 20, cat: 2, subcat: "Bekleidung (Wärme & Kälte)", name: "Badehose", weight: 0.070, qty: "", worn: false },
-      { id: 21, cat: 2, subcat: "Regenschutzausrüstung", name: "Regenponcho", weight: 0.274, qty: "", worn: false },
-      { id: 22, cat: 2, subcat: "Regenschutzausrüstung", name: "Windjacke", weight: 0.073, qty: "", worn: false },
-      { id: 23, cat: 2, subcat: "Schuhe & Fußbekleidung", name: "Wandersandalen Teva", weight: 0.574, qty: "", worn: false },
-      { id: 24, cat: 2, subcat: "Schuhe & Fußbekleidung", name: "Badelatschen", weight: 0.204, qty: "", worn: false },
-      { id: 25, cat: 2, subcat: "Bekleidung (Unterwäsche & Socken)", name: "Wandersocken (Merino)", weight: 0.040, qty: "", worn: false },
-      { id: 26, cat: 2, subcat: "Bekleidung (Unterwäsche & Socken)", name: "Funktionsunterwäsche (beim Gehen)", weight: 0.073, qty: "", worn: false },
-      { id: 27, cat: 2, subcat: "Bekleidung (Unterwäsche & Socken)", name: "Funktionsunterwäsche", weight: 0.073, qty: "", worn: false },
-      { id: 28, cat: 2, subcat: "Sonnenschutz & Accessoires", name: "Buff / Schlauchtuch", weight: 0.045, qty: "", worn: false },
-      { id: 29, cat: 2, subcat: "Sonnenschutz & Accessoires", name: "Sonnenhut", weight: 0.064, qty: "", worn: false },
-      { id: 30, cat: 2, subcat: "Sonnenschutz & Accessoires", name: "Sonnenbrille", weight: 0.030, qty: "", worn: false },
-      { id: 31, cat: 2, subcat: "Sonnenschutz & Accessoires", name: "Sonnencreme", weight: 0.060, qty: "", worn: false },
-      { id: 32, cat: 2, subcat: "Sonnenschutz & Accessoires", name: "Lippenbalsam", weight: 0.009, qty: "", worn: false },
-      { id: 33, cat: 2, subcat: "Hydration & Ausrüstung", name: "Leere Wasserflasche", weight: 0.025, qty: "", worn: false },
-      { id: 34, cat: 2, subcat: "Hydration & Ausrüstung", name: "Trekkingstöcke (Paar)", weight: 0.400, qty: "", worn: false },
-      { id: 35, cat: 2, subcat: "Wäsche, Werkzeug & Notfall", name: "REI (Mini Waschmittel)", weight: 0.025, qty: "", worn: false },
-      { id: 36, cat: 2, subcat: "Wäsche, Werkzeug & Notfall", name: "Wäscheklammern (4x)", weight: 0.015, qty: "", worn: false },
-      { id: 37, cat: 2, subcat: "Wäsche, Werkzeug & Notfall", name: "Nähset Mini", weight: 0.005, qty: "", worn: false },
-      { id: 38, cat: 2, subcat: "Wäsche, Werkzeug & Notfall", name: "Taschenmesser mini", weight: 0.020, qty: "", worn: false },
-      { id: 39, cat: 2, subcat: "Wäsche, Werkzeug & Notfall", name: "Notfallbiwak", weight: 0.150, qty: "", worn: false },
-      { id: 40, cat: 2, subcat: "Wäsche, Werkzeug & Notfall", name: "Karabiner", weight: 0.022, qty: "", worn: false },
-      { id: 41, cat: 3, subcat: "Elektronik & Navigation", name: "Smartphone", weight: 0.220, qty: "", worn: false },
-      { id: 42, cat: 3, subcat: "Elektronik & Navigation", name: "Anker Ladestecker 2x USB-C", weight: 0.089, qty: "", worn: false },
-      { id: 43, cat: 3, subcat: "Elektronik & Navigation", name: "Adapter USB-C auf Garmin", weight: 0.002, qty: "", worn: false },
-      { id: 44, cat: 3, subcat: "Elektronik & Navigation", name: "Anker USB-C Kabel", weight: 0.016, qty: "", worn: false },
-      { id: 45, cat: 3, subcat: "Elektronik & Navigation", name: "Powerbank (10.000 mAh)", weight: 0.200, qty: "", worn: false },
-      { id: 46, cat: 3, subcat: "Elektronik & Navigation", name: "Kopfhörer", weight: 0.045, qty: "", worn: false },
-      { id: 47, cat: 3, subcat: "Elektronik & Navigation", name: "Kopflampe (LED)", weight: 0.058, qty: "", worn: false },
-      { id: 48, cat: 3, subcat: "Elektronik & Navigation", name: "Lampe AliExpress", weight: 0.033, qty: "", worn: false },
-      { id: 49, cat: 3, subcat: "Elektronik & Navigation", name: "Rasierer (Elektrisch)", weight: 0.200, qty: "", worn: false },
-      { id: 50, cat: 3, subcat: "Elektronik & Navigation", name: "Adapter Laden Rasierer", weight: 0.009, qty: "", worn: false },
-      { id: 51, cat: 4, subcat: "Körperpflege & Hygiene", name: "Mikrofaser-Handtuch (mini - blau/grün - 39x55)", weight: 0.037, qty: "", worn: false },
-      { id: 52, cat: 4, subcat: "Körperpflege & Hygiene", name: "Mikrofaser-Handtuch (groß - grau - 160x80)", weight: 0.272, qty: "", worn: false },
-      { id: 53, cat: 4, subcat: "Körperpflege & Hygiene", name: "Zahnbürste", weight: 0.018, qty: "", worn: false },
-      { id: 54, cat: 4, subcat: "Körperpflege & Hygiene", name: "Zahnpasta", weight: 0.050, qty: "", worn: false },
-      { id: 55, cat: 4, subcat: "Körperpflege & Hygiene", name: "Festes Shampoo", weight: 0.030, qty: "", worn: false },
-      { id: 56, cat: 4, subcat: "Körperpflege & Hygiene", name: "Gesichtscreme", weight: 0.065, qty: "", worn: false },
-      { id: 57, cat: 4, subcat: "Körperpflege & Hygiene", name: "Haargel", weight: 0.115, qty: "", worn: false },
-      { id: 58, cat: 4, subcat: "Körperpflege & Hygiene", name: "Deoroller", weight: 0.081, qty: "", worn: false },
-      { id: 59, cat: 4, subcat: "Körperpflege & Hygiene", name: "Parfum", weight: 0.018, qty: "", worn: false },
-      { id: 60, cat: 4, subcat: "Körperpflege & Hygiene", name: "Einweg-Nassrasierer", weight: 0.006, qty: "", worn: false },
-      { id: 61, cat: 4, subcat: "Körperpflege & Hygiene", name: "Nagelset", weight: 0.068, qty: "", worn: false },
-      { id: 62, cat: 4, subcat: "Körperpflege & Hygiene", name: "Zahnseide Sticks", weight: 0.030, qty: "", worn: false },
-      { id: 63, cat: 4, subcat: "Körperpflege & Hygiene", name: "Taschentücher", weight: 0.037, qty: "", worn: false },
-      { id: 64, cat: 4, subcat: "Körperpflege & Hygiene", name: "Feuchtes Toilettenpapier", weight: 0.100, qty: "", worn: false },
-      { id: 65, cat: 4, subcat: "Körperpflege & Hygiene", name: "Oropax", weight: 0.020, qty: "", worn: false },
-      { id: 66, cat: 4, subcat: "Erste Hilfe & Apotheke", name: "Leukoplast", weight: 0.030, qty: "", worn: false },
-      { id: 67, cat: 4, subcat: "Erste Hilfe & Apotheke", name: "Wichtige Medikamente (Kopfweh, Kohle etc.)", weight: 0.100, qty: "", worn: false },
-      { id: 68, cat: 4, subcat: "Erste Hilfe & Apotheke", name: "Voltaren Creme", weight: 0.086, qty: "", worn: false },
-      { id: 69, cat: 4, subcat: "Erste Hilfe & Apotheke", name: "Hirschtalg", weight: 0.120, qty: "", worn: false },
-      { id: 70, cat: 4, subcat: "Erste Hilfe & Apotheke", name: "Pflaster (Blasen-, Normale Pflaster)", weight: 0.060, qty: "", worn: false },
-      { id: 71, cat: 4, subcat: "Erste Hilfe & Apotheke", name: "Bandage Knie", weight: 0.062, qty: "", worn: false },
-      { id: 72, cat: 4, subcat: "Erste Hilfe & Apotheke", name: "Bandage Sprunggelenk", weight: 0.034, qty: "", worn: false },
-      { id: 73, cat: 4, subcat: "Dokumente & Tagebuch", name: "Pilgerausweis (Credencial)", weight: 0.016, qty: "", worn: false },
-      { id: 74, cat: 4, subcat: "Dokumente & Tagebuch", name: "Hülle für Pilgerausweis", weight: 0.024, qty: "", worn: false },
-      { id: 75, cat: 4, subcat: "Dokumente & Tagebuch", name: "Personalausweis", weight: 0.015, qty: "", worn: false },
-      { id: 76, cat: 4, subcat: "Dokumente & Tagebuch", name: "Krankenkassenkarte / Versicherung", weight: 0.010, qty: "", worn: false },
-      { id: 77, cat: 4, subcat: "Dokumente & Tagebuch", name: "EC-/Kreditkarte + Bargeld", weight: 0.050, qty: "", worn: false },
-      { id: 78, cat: 4, subcat: "Dokumente & Tagebuch", name: "Jakobsmuschel", weight: 0.022, qty: "", worn: false },
-      { id: 79, cat: 4, subcat: "Dokumente & Tagebuch", name: "Kugelschreiber Mehrfarbig", weight: 0.010, qty: "", worn: false },
-      { id: 80, cat: 4, subcat: "Dokumente & Tagebuch", name: "Heft als Tagebuch", weight: 0.100, qty: "", worn: false }
-    ];
 
+
+
+
+
+
+
+<script>
     let currentRegion = 'all';
-
-    function safeGetStorage(key) {
-      try { return localStorage.getItem(key); } catch (e) { return null; }
-    }
-
-    function safeSetStorage(key, val) {
-      try { localStorage.setItem(key, val); } catch (e) {}
-    }
-
-    let storedPack = safeGetStorage('camino_pack_items_v14');
-    let userPackItems = null;
-    try {
-      userPackItems = storedPack ? JSON.parse(storedPack) : null;
-    } catch(e) { userPackItems = null; }
-
-    if (!userPackItems || !Array.isArray(userPackItems) || userPackItems.length === 0) {
-      userPackItems = JSON.parse(JSON.stringify(packingData));
-      safeSetStorage('camino_pack_items_v14', JSON.stringify(userPackItems));
-    }
-
     let map, chart;
+    const markers = {};
 
-    function switchTab(tabId, btn) {
-      document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
-      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-      document.getElementById(tabId).classList.add('active');
-      btn.classList.add('active');
+    /* CAMINO ETAPPEN DATENBANK INKL. FLÜGE & TRANSIT */
+    const rawData = [
+      { id: "A1", badge: "Anreise", date: "04.09. (Fr)", region: "Anreise", title: "München ➔ Madrid ➔ León", desc: "Flug IB1310 um 12:10 Uhr ab MUC nach Madrid (MAD). Zug um 17:30 nach León (Ankunft 19:47).", transport: "✈️ IB1310 | 🚆 Zug (17:30)", hotel: "🏨 Leon Hostel Jabalquinto", km: 0, weatherLoc: "Leon,Spain", locationName: "León" },
+      { id: "A2", badge: "Anreise", date: "05.09. (Sa)", region: "Anreise", title: "León ➔ Oviedo", desc: "Morgens Erkundung León. Busfahrt nach Oviedo & Akklimatisierung.", transport: "🚌 Fernbus", hotel: "🏨 La Hospederia", km: 0, weatherLoc: "Oviedo,Spain", locationName: "Oviedo" },
+      { id: "E1", badge: "Etappe 1", date: "06.09. (So)", region: "Asturien", title: "Oviedo ➔ Grado", desc: "Auftaktetappe ab der Kathedrale Oviedo", transport: "📏 26,5 km | ⛰️ 620 hm", hotel: "🏡 Herberge / Pension", km: 26.5, weatherLoc: "Grado,Spain", locationName: "Grado" },
+      { id: "E2", badge: "Etappe 2", date: "07.09. (Mo)", region: "Asturien", title: "Grado ➔ Salas", desc: "Malerische Täler, historisches Salas", transport: "📏 22,1 km | ⛰️ 490 hm", hotel: "🏡 Herberge / Pension", km: 22.1, weatherLoc: "Salas,Spain", locationName: "Salas" },
+      { id: "E3", badge: "Etappe 3", date: "08.09. (Di)", region: "Asturien", title: "Salas ➔ Tineo", desc: "Stetiger Anstieg durch asturische Wälder", transport: "📏 19,9 km | ⛰️ 780 hm", hotel: "🏡 Herberge / Pension", km: 19.9, weatherLoc: "Tineo,Spain", locationName: "Tineo" },
+      { id: "E4", badge: "Etappe 4", date: "09.09. (Mi)", region: "Asturien", title: "Tineo ➔ Borres", desc: "Kürzere Etappe vor der Hospitales-Route", transport: "📏 15,7 km | ⛰️ 520 hm", hotel: "🏡 Herberge / Pension", km: 15.7, weatherLoc: "Tineo,Spain", locationName: "Borres" },
+      { id: "E5", badge: "Etappe 5", date: "10.09. (Do)", region: "Asturien Königsetappe", title: "Borres ➔ Berducedo", desc: "<strong>KÖNIGSETAPPE:</strong> Über die Hospitales-Route (bei gutem Wetter!)", transport: "📏 24,6 km | ⛰️ 1.100 hm", hotel: "🏡 Herberge / Pension", km: 24.6, weatherLoc: "Allande,Spain", locationName: "Berducedo" },
+      { id: "E6", badge: "Etappe 6", date: "11.09. (Fr)", region: "Asturien", title: "Berducedo ➔ Grandas de Salime", desc: "Abstieg zum Stausee Embalse de Salime", transport: "📏 20,3 km | ⛰️ 320 hm", hotel: "🏡 Herberge / Pension", km: 20.3, weatherLoc: "GrandasdeSalime,Spain", locationName: "Grandas de Salime" },
+      { id: "E7", badge: "Etappe 7", date: "12.09. (Sa)", region: "Galicien", title: "Grandas de Salime ➔ A Fonsagrada", desc: "Grenzübertritt von Asturien nach Galicien (Puerto del Acebo)", transport: "📏 25,7 km | ⛰️ 930 hm", hotel: "🏡 Herberge / Pension", km: 25.7, weatherLoc: "AFonsagrada,Spain", locationName: "A Fonsagrada" },
+      { id: "E8", badge: "Etappe 8", date: "13.09. (So)", region: "Galicien", title: "A Fonsagrada ➔ O Cádavo", desc: "Typisch galicische Landschaft", transport: "📏 24,4 km | ⛰️ 610 hm", hotel: "🏡 Herberge / Pension", km: 24.4, weatherLoc: "Baleira,Spain", locationName: "O Cádavo" },
+      { id: "E9", badge: "Etappe 9", date: "14.09. (Mo)", region: "Galicien", title: "O Cádavo ➔ Lugo", desc: "Ankunft in Lugo (Römische Stadtmauer)", transport: "📏 30,6 km | ⛰️ 480 hm", hotel: "🏡 Herberge / Pension", km: 30.6, weatherLoc: "Lugo,Spain", locationName: "Lugo" },
+      { id: "E10", badge: "Etappe 10", date: "15.09. (Di)", region: "Galicien", title: "Lugo ➔ Ferreira", desc: "Verlauf durch das galicische Hinterland", transport: "📏 27,1 km | ⛰️ 380 hm", hotel: "🏡 Herberge / Pension", km: 27.1, weatherLoc: "Guntin,Spain", locationName: "Ferreira" },
+      { id: "E11", badge: "Etappe 11", date: "16.09. (Mi)", region: "Galicien", title: "Ferreira ➔ Boente", desc: "Einmündung auf den Camino Francés nahe Melide", transport: "📏 26,0 km | ⛰️ 420 hm", hotel: "🏡 Herberge / Pension", km: 26.0, weatherLoc: "Melide,Spain", locationName: "Boente" },
+      { id: "E12", badge: "Etappe 12", date: "17.09. (Do)", region: "Galicien", title: "Boente ➔ A Rúa", desc: "Vorletzter Tag, mehr Betrieb auf dem Weg", transport: "📏 26,2 km | ⛰️ 340 hm", hotel: "🏡 Herberge / Pension", km: 26.2, weatherLoc: "Arzua,Spain", locationName: "A Rúa" },
+      { id: "E13", badge: "Etappe 13", date: "18.09. (Fr)", region: "Galicien Ziel", title: "A Rúa ➔ Santiago de Compostela", desc: "<strong>CAMINO ZIEL!</strong> Ankunft an der Kathedrale, Compostela abholen.", transport: "📏 20,8 km | ⛰️ 310 hm", hotel: "🏨 Santiago (Nacht 1)", km: 20.8, weatherLoc: "SantiagodeCompostela,Spain", locationName: "Santiago de Compostela" },
+      { id: "F1", badge: "Ausflug", date: "19.09. (Sa)", region: "Fisterra", title: "Santiago ➔ Fisterra", desc: "Busfahrt an die Atlantikküste / Ende der Welt. Sonnenuntergang Kap Fisterra.", transport: "🚌 Monbus (ca. 2 Std.)", hotel: "🏨 Unterkunft Fisterra", km: 0, weatherLoc: "Fisterra,Spain", locationName: "Kap Fisterra / Finisterre" },
+      { id: "F2", badge: "Ausflug", date: "20.09. (So)", region: "Fisterra", title: "Fisterra (Küste & Meer)", desc: "Entspannter Tag am Strand (Playa de Langosteira), Meeresfrüchte genießen.", transport: "🚶 Küstenweg & Strand", hotel: "🏨 Unterkunft Fisterra", km: 0, weatherLoc: "Fisterra,Spain", locationName: "Kap Fisterra / Finisterre" },
+      { id: "F3", badge: "Ausflug", date: "21.09. (Mo)", region: "Fisterra", title: "Fisterra ➔ Santiago", desc: "Rückfahrt nach Santiago. Letzter Abend im historischen Zentrum.", transport: "🚌 Monbus ➔ 🚶 Altstadt", hotel: "🏨 Santiago (Letzte Nacht)", km: 0, weatherLoc: "SantiagodeCompostela,Spain", locationName: "Santiago de Compostela" },
+      { id: "R1", badge: "Abreise", date: "22.09. (Di)", region: "Abreise", title: "Santiago ➔ Madrid ➔ München", desc: "09:20 Uhr: IB518 nach Madrid (MAD T4). Shuttle zu T2. 15:10 Uhr: UX1517 Rückflug nach MUC.", transport: "✈️ IB518 ➔ Shuttle ➔ ✈️ UX1517", hotel: "🏠 Ankunft München", km: 0, weatherLoc: "Munich,Germany", locationName: "München (MUC)" }
+    ];
 
-      if (tabId === 'plan-tab' && map) {
-        setTimeout(() => map.invalidateSize(), 150);
+    /* PACKLISTEN DATENBANK */
+    const rawItemsData = [
+      ["1|Tragesystem & Schlafen", "Trekkingrucksack (35 L)", 1000],
+      ["1|Tragesystem & Schlafen", "Hüttenschlafsack Seide", 179],
+      ["1|Tragesystem & Schlafen", "Kissenbezug Seide", 55],
+      ["1|Organisation & Ordnung", "Packsäcke / Drybags (Set)", 30],
+      ["1|Organisation & Ordnung", "Umhängetasche", 180],
+      ["1|Organisation & Ordnung", "Kulturtbeutel leer", 72],
+      ["1|Organisation & Ordnung", "Zip Beutel für Cremes", 20],
+      ["1|Organisation & Ordnung", "Zip Beutel für Elektrozeugs", 12],
+      ["2|Bekleidung (Wandern)", "Wanderhose lang", 366],
+      ["2|Bekleidung (Wandern)", "Wanderhose kurz", 262],
+      ["2|Bekleidung (Wandern)", "Gürtel für Wanderhose", 36],
+      ["2|Bekleidung (Wandern)", "Funktions-T-Shirt (Merino)", 135],
+      ["2|Bekleidung (Wandern)", "Funktions-T-Shirt (Columbia)", 150],
+      ["2|Bekleidung (Wandern)", "Langarm-Sunhoodie (Midlayer)", 200],
+      ["2|Bekleidung (Wandern)", "Thermo Unterhemd Adidas", 130],
+      ["2|Bekleidung (Wandern)", "Tanktop Mikrofaser", 50],
+      ["2|Bekleidung (Wärme & Kälte)", "Fleecepullover für abends", 251],
+      ["2|Bekleidung (Wärme & Kälte)", "Warme Jacke Decathlon", 500],
+      ["2|Bekleidung (Wärme & Kälte)", "Handschuhe", 28],
+      ["2|Bekleidung (Wärme & Kälte)", "Badehose", 70],
+      ["2|Regenschutzausrüstung", "Regenponcho", 274],
+      ["2|Regenschutzausrüstung", "Windjacke", 73],
+      ["2|Schuhe & Fußbekleidung", "Wandersandalen Teva", 574],
+      ["2|Schuhe & Fußbekleidung", "Badelatschen", 204],
+      ["2|Bekleidung (Unterwäsche & Socken)", "Wandersocken (Merino)", 40],
+      ["2|Bekleidung (Unterwäsche & Socken)", "Funktionsunterwäsche (beim Gehen)", 73],
+      ["2|Bekleidung (Unterwäsche & Socken)", "Funktionsunterwäsche", 73],
+      ["2|Sonnenschutz & Accessoires", "Buff / Schlauchtuch", 45],
+      ["2|Sonnenschutz & Accessoires", "Sonnenhut", 64],
+      ["2|Sonnenschutz & Accessoires", "Sonnenbrille", 30],
+      ["2|Sonnenschutz & Accessoires", "Sonnencreme", 60],
+      ["2|Sonnenschutz & Accessoires", "Lippenbalsam", 9],
+      ["2|Hydration & Ausrüstung", "Leere Wasserflasche", 25],
+      ["2|Hydration & Ausrüstung", "Trekkingstöcke (Paar)", 400],
+      ["2|Wäsche, Werkzeug & Notfall", "REI (Mini Waschmittel)", 25],
+      ["2|Wäsche, Werkzeug & Notfall", "Wäscheklammern (4x)", 15],
+      ["2|Wäsche, Werkzeug & Notfall", "Nähset Mini", 5],
+      ["2|Wäsche, Werkzeug & Notfall", "Taschenmesser mini", 20],
+      ["2|Wäsche, Werkzeug & Notfall", "Notfallbiwak", 150],
+      ["2|Wäsche, Werkzeug & Notfall", "Karabiner", 22],
+      ["3|Elektronik & Navigation", "Smartphone", 220],
+      ["3|Elektronik & Navigation", "Anker Ladestecker 2x USB-C", 89],
+      ["3|Elektronik & Navigation", "Adapter USB-C auf Garmin", 2],
+      ["3|Elektronik & Navigation", "Anker USB-C Kabel", 16],
+      ["3|Elektronik & Navigation", "Powerbank (10.000 mAh)", 200],
+      ["3|Elektronik & Navigation", "Kopfhörer", 45],
+      ["3|Elektronik & Navigation", "Kopflampe (LED)", 58],
+      ["3|Elektronik & Navigation", "Lampe AliExpress", 33],
+      ["3|Elektronik & Navigation", "Rasierer (Elektrisch)", 200],
+      ["3|Elektronik & Navigation", "Adapter Laden Rasierer", 9],
+      ["4|Körperpflege & Hygiene", "Mikrofaser-Handtuch (mini - 39x55)", 37],
+      ["4|Körperpflege & Hygiene", "Mikrofaser-Handtuch (groß - 160x80)", 272],
+      ["4|Körperpflege & Hygiene", "Zahnbürste", 18],
+      ["4|Körperpflege & Hygiene", "Zahnpasta", 50],
+      ["4|Körperpflege & Hygiene", "Festes Shampoo", 30],
+      ["4|Körperpflege & Hygiene", "Gesichtscreme", 65],
+      ["4|Körperpflege & Hygiene", "Haargel", 115],
+      ["4|Körperpflege & Hygiene", "Deoroller", 81],
+      ["4|Körperpflege & Hygiene", "Parfum", 18],
+      ["4|Körperpflege & Hygiene", "Einweg-Nassrasierer", 6],
+      ["4|Körperpflege & Hygiene", "Nagelset", 68],
+      ["4|Körperpflege & Hygiene", "Zahnseide Sticks", 30],
+      ["4|Körperpflege & Hygiene", "Taschentücher", 37],
+      ["4|Körperpflege & Hygiene", "Feuchtes Toilettenpapier", 100],
+      ["4|Körperpflege & Hygiene", "Oropax", 20],
+      ["4|Erste Hilfe & Apotheke", "Leukoplast", 30],
+      ["4|Erste Hilfe & Apotheke", "Wichtige Medikamente", 100],
+      ["4|Erste Hilfe & Apotheke", "Voltaren Creme", 86],
+      ["4|Erste Hilfe & Apotheke", "Hirschtalg", 120],
+      ["4|Erste Hilfe & Apotheke", "Pflaster (Blasen-, Normale)", 60],
+      ["4|Erste Hilfe & Apotheke", "Bandage Knie", 62],
+      ["4|Erste Hilfe & Apotheke", "Bandage Sprunggelenk", 34],
+      ["4|Dokumente & Tagebuch", "Pilgerausweis (Credencial)", 16],
+      ["4|Dokumente & Tagebuch", "Hülle für Pilgerausweis", 24],
+      ["4|Dokumente & Tagebuch", "Personalausweis", 15],
+      ["4|Dokumente & Tagebuch", "Krankenkassenkarte", 10],
+      ["4|Dokumente & Tagebuch", "EC-/Kreditkarte + Bargeld", 50],
+      ["4|Dokumente & Tagebuch", "Jakobsmuschel", 22],
+      ["4|Dokumente & Tagebuch", "Kugelschreiber Mehrfarbig", 10],
+      ["4|Dokumente & Tagebuch", "Heft als Tagebuch", 100]
+    ];
+
+    const defaultPacklist = rawItemsData.map(item => ({
+      cat: item[0],
+      name: item[1],
+      weight: item[2],
+      qty: 1,
+      packed: true,
+      worn: false
+    }));
+
+    let packlist = [];
+
+    /* Lade Packliste aus LocalStorage */
+    function loadPacklist() {
+      const saved = localStorage.getItem('camino_packlist_2026_v15');
+      if (saved) {
+        try { 
+          packlist = JSON.parse(saved); 
+          if (!Array.isArray(packlist) || packlist.length === 0) {
+            packlist = JSON.parse(JSON.stringify(defaultPacklist));
+          }
+        } catch (e) { 
+          packlist = JSON.parse(JSON.stringify(defaultPacklist)); 
+        }
+      } else {
+        packlist = JSON.parse(JSON.stringify(defaultPacklist));
+      }
+      renderPacklist();
+    }
+
+    function savePacklist() {
+      localStorage.setItem('camino_packlist_2026_v15', JSON.stringify(packlist));
+      renderPacklist();
+    }
+
+    function resetPacklist() {
+      if (confirm("Möchtest du die Packliste wirklich auf den Ursprungszustand zurücksetzen?")) {
+        packlist = JSON.parse(JSON.stringify(defaultPacklist));
+        savePacklist();
       }
     }
 
-    function renderPlan() {
-      const tbody = document.getElementById('tableBody');
+    function renderPacklist() {
+      const tbody = document.getElementById('packTableBody');
+      if (!tbody) return;
+      tbody.innerHTML = '';
+
+      let packWeightG = 0;
+      let wornWeightG = 0;
+      let packedCount = 0;
+
+      const categories = {};
+      packlist.forEach((item, index) => {
+        item._origIndex = index;
+        if (!categories[item.cat]) categories[item.cat] = [];
+        categories[item.cat].push(item);
+
+        if (item.packed) {
+          const itemTotal = (item.weight || 0) * (item.qty || 1);
+          if (item.worn) {
+            wornWeightG += itemTotal;
+          } else {
+            packWeightG += itemTotal;
+          }
+          packedCount++;
+        }
+      });
+
+      // Update Dashboard Stats
+      document.getElementById('packWeightKg').innerText = `${(packWeightG / 1000).toFixed(2)} kg`;
+      document.getElementById('wornWeightKg').innerText = `${(wornWeightG / 1000).toFixed(2)} kg`;
+      document.getElementById('grandTotalKg').innerText = `${((packWeightG + wornWeightG) / 1000).toFixed(2)} kg`;
+      document.getElementById('totalPackedItems').innerText = `${packedCount} / ${packlist.length}`;
+
+      Object.keys(categories).forEach(cat => {
+        const catRow = document.createElement('tr');
+        const displayCatName = cat.includes('|') ? cat.split('|')[1] : cat;
+        catRow.innerHTML = `<td colspan="8" class="pack-table-category">${displayCatName}</td>`;
+        tbody.appendChild(catRow);
+
+        categories[cat].forEach(item => {
+          const idx = item._origIndex;
+          const totalItemWeight = (item.weight || 0) * (item.qty || 1);
+          const tr = document.createElement('tr');
+
+          tr.innerHTML = `
+            <td style="text-align:center;">
+              <input type="checkbox" ${item.packed ? 'checked' : ''} onchange="togglePacked(${idx})" style="accent-color: var(--primary); width:16px; height:16px; cursor:pointer;">
+            </td>
+            <td>
+              <strong style="color: ${item.packed ? 'var(--text-main)' : 'var(--text-muted)'}; ${!item.packed ? 'text-decoration: line-through;' : ''}">
+                ${item.name}
+              </strong>
+            </td>
+            <td style="font-size:0.8rem; color:var(--text-muted);">${displayCatName}</td>
+            <td style="text-align:center;">
+              <label class="worn-label">
+                <input type="checkbox" ${item.worn ? 'checked' : ''} onchange="toggleWorn(${idx})">
+                <span>👕 Am Körper</span>
+              </label>
+            </td>
+            <td style="text-align:center;">
+              <div class="qty-controls">
+                <button class="qty-btn" onclick="changeQty(${idx}, -1)">-</button>
+                <span>${item.qty || 1}</span>
+                <button class="qty-btn" onclick="changeQty(${idx}, 1)">+</button>
+              </div>
+            </td>
+            <td style="text-align:right;">${item.weight || 0} g</td>
+            <td style="text-align:right; font-weight:700; color:var(--primary);">${totalItemWeight} g</td>
+            <td style="text-align:center;">
+              <button class="btn-icon" title="Bearbeiten" onclick="editPackItem(${idx})">✏️</button>
+              <button class="btn-icon" title="Löschen" onclick="deletePackItem(${idx})">🗑️</button>
+            </td>
+          `;
+          tbody.appendChild(tr);
+        });
+      });
+    }
+
+    function togglePacked(index) {
+      packlist[index].packed = !packlist[index].packed;
+      savePacklist();
+    }
+
+    function toggleWorn(index) {
+      packlist[index].worn = !packlist[index].worn;
+      savePacklist();
+    }
+
+    function changeQty(index, delta) {
+      const current = packlist[index].qty || 1;
+      const updated = Math.max(1, current + delta);
+      packlist[index].qty = updated;
+      savePacklist();
+    }
+
+    function addPackItem() {
+      const nameInput = document.getElementById('newItemName');
+      const catInput = document.getElementById('newItemCat');
+      const weightInput = document.getElementById('newItemWeight');
+
+      const name = nameInput.value.trim();
+      const cat = catInput.value;
+      const weight = parseInt(weightInput.value) || 0;
+
+      if (!name) {
+        alert("Bitte gib einen Namen für den Gegenstand ein.");
+        return;
+      }
+
+      packlist.push({ name, cat, weight, qty: 1, packed: true, worn: false });
+      nameInput.value = '';
+      weightInput.value = '';
+      savePacklist();
+    }
+
+    function deletePackItem(index) {
+      if (confirm(`Möchtest du "${packlist[index].name}" aus der Liste entfernen?`)) {
+        packlist.splice(index, 1);
+        savePacklist();
+      }
+    }
+
+    function editPackItem(index) {
+      const item = packlist[index];
+      const newName = prompt("Name des Gegenstands:", item.name);
+      if (newName === null) return;
+
+      const newWeightStr = prompt("Gewicht in Gramm:", item.weight);
+      if (newWeightStr === null) return;
+
+      item.name = newName.trim() || item.name;
+      item.weight = parseInt(newWeightStr) || 0;
+      savePacklist();
+    }
+
+    function renderPlanTable() {
+      const tbody = document.querySelector('#planTable tbody');
       if (!tbody) return;
       tbody.innerHTML = '';
 
@@ -745,30 +1063,56 @@
         if (item.region.includes('Fisterra')) tagClass = 'tag-fisterra';
         if (item.region.includes('Ziel')) tagClass = 'tag-ziel';
 
-        let rowClass = '';
-        if (item.region.includes('Königsetappe')) rowClass = 'koenig-row';
-        if (item.region.includes('Anreise') || item.region.includes('Abreise')) rowClass = 'travel-row';
-        if (item.region.includes('Fisterra')) rowClass = 'fisterra-row';
-
         const tr = document.createElement('tr');
-        tr.className = rowClass;
+        tr.className = 'clickable-row';
         tr.setAttribute('data-region', item.region);
+        tr.setAttribute('data-location', item.locationName);
+        tr.onclick = () => focusMap(item.locationName);
 
         tr.innerHTML = `
           <td><span class="day-badge">${item.badge}</span><div class="sub-note">${item.date}</div></td>
           <td><span class="tag-region ${tagClass}">${item.region.split(' ')[0]}</span></td>
           <td><div class="route-title">${item.title}</div></td>
           <td>${item.desc}</td>
-          <td><span class="${item.km > 0 ? 'dist-pill' : 'transport-pill'}">${item.transport}</span></td>
-          <td><button class="action-btn" onclick="fetchWeather('${item.weatherLoc}', this)">🌤️ Wetter</button></td>
+          <td><span class="${item.km > 0 ? 'transport-pill' : 'transport-pill'}">${item.transport}</span></td>
+          <td><button class="action-btn" style="padding:3px 8px; font-size:0.8rem; cursor:pointer;" onclick="event.stopPropagation(); fetchWeather('${item.weatherLoc}', this)">🌤️ Wetter</button></td>
           <td><span class="hotel-pill">${item.hotel}</span></td>
         `;
         tbody.appendChild(tr);
       });
-
       renderMobileCards();
     }
 
+    /* Tab Wechseln */
+    function switchTab(tabId, btn) {
+      document.querySelectorAll('.tab-content').forEach(tc => tc.classList.remove('active'));
+      document.querySelectorAll('.tab-btn').forEach(tb => tb.classList.remove('active'));
+      document.getElementById(tabId).classList.add('active');
+      btn.classList.add('active');
+      if(tabId === 'routeTab' && map) {
+        setTimeout(() => { map.invalidateSize(); }, 150);
+      }
+    }
+
+    /* Live Countdown */
+    function updateCountdown() {
+      const flightDate = new Date('2026-09-04T12:10:00');
+      const now = new Date();
+      const diff = flightDate - now;
+
+      if (diff > 0) {
+        const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+        const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
+        const mins = Math.floor((diff / (1000 * 60)) % 60);
+        document.getElementById('countdown').innerText = `⏳ Noch ${days} Tage, ${hours} Std. & ${mins} Min. bis zum Abflug!`;
+      } else {
+        document.getElementById('countdown').innerText = `🎉 Buen Camino! Der Trip läuft!`;
+      }
+    }
+    setInterval(updateCountdown, 60000);
+    updateCountdown();
+
+    /* Filter & Suche */
     function setFilter(region, btn) {
       currentRegion = region;
       document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
@@ -798,18 +1142,21 @@
       container.innerHTML = '';
       const visibleRows = document.querySelectorAll('#planTable tbody tr');
 
-      visibleRows.forEach((row) => {
+      visibleRows.forEach(row => {
         if (row.style.display === 'none') return;
+
         const cells = row.querySelectorAll('td');
-        if (cells.length < 7) return;
+        const locName = row.getAttribute('data-location');
         const card = document.createElement('div');
         card.className = 'card';
+        card.onclick = () => focusMap(locName);
+
         card.innerHTML = `
           <div class="card-header">
-            <div style="display:flex; align-items:center; gap:10px;">${cells[0].innerHTML}</div>
+            <div>${cells[0].innerHTML}</div>
             <div>${cells[1].innerHTML}</div>
           </div>
-          <div style="font-size: 1.05rem; font-weight: 700; color: var(--text-main); margin-bottom: 6px;">
+          <div style="font-size: 1rem; font-weight: 700; color: var(--text-main); margin-bottom: 6px;">
             ${cells[2].innerText}
           </div>
           <div style="font-size: 0.88rem; color: var(--text); margin-bottom: 10px;">
@@ -823,6 +1170,14 @@
         `;
         container.appendChild(card);
       });
+    }
+
+    function focusMap(locationName) {
+      if (markers[locationName]) {
+        map.flyTo([markers[locationName].lat, markers[locationName].lng], 11, { duration: 1.2 });
+        markers[locationName].marker.openPopup();
+        document.querySelector('.map-section').scrollIntoView({ behavior: 'smooth' });
+      }
     }
 
     async function fetchWeather(locationQuery, btn) {
@@ -849,152 +1204,31 @@
       }
     }
 
-    function renderPackingList() {
-      let packTotal = 0;
-      let wornTotal = 0;
-
-      for (let c = 1; c <= 4; c++) {
-        const container = document.getElementById(`packCat${c}`);
-        if (!container) continue;
-        container.innerHTML = '';
-        let catWeight = 0;
-
-        const catItems = userPackItems.filter(item => item.cat === c);
-        const subcats = [...new Set(catItems.map(i => i.subcat))];
-
-        subcats.forEach(sub => {
-          const subHeader = document.createElement('div');
-          subHeader.className = 'subcat-header';
-          subHeader.innerText = sub;
-          container.appendChild(subHeader);
-
-          catItems.filter(i => i.subcat === sub).forEach(item => {
-            const rawQty = (item.qty === "" || item.qty === null || item.qty === undefined) ? "" : item.qty;
-            const numQty = rawQty === "" || isNaN(parseInt(rawQty, 10)) ? 0 : parseInt(rawQty, 10);
-            const itemWeightTotal = numQty * item.weight;
-
-            if (numQty > 0) {
-              catWeight += itemWeightTotal;
-              if (item.worn) {
-                wornTotal += itemWeightTotal;
-              } else {
-                packTotal += itemWeightTotal;
-              }
-            }
-
-            const div = document.createElement('div');
-            div.className = 'pack-item-row';
-            div.innerHTML = `
-              <div class="pack-item-info">
-                <input type="number" min="0" max="99" class="qty-input" placeholder="0" value="${rawQty}" onchange="updatePackQty(${item.id}, this.value)" oninput="updatePackQty(${item.id}, this.value)">
-                <span style="${numQty > 0 ? 'font-weight:700; color:var(--text-main);' : 'color:var(--text-muted);'}">${item.name}</span>
-              </div>
-              <div class="pack-item-controls">
-                <label class="worn-label">
-                  <input type="checkbox" ${item.worn ? 'checked' : ''} onchange="toggleWorn(${item.id}, this.checked)">
-                  <span>👕 Am Körper</span>
-                </label>
-                <span class="weight-tag" style="min-width:65px; text-align:right;">${itemWeightTotal > 0 ? itemWeightTotal.toFixed(3) : item.weight.toFixed(3)} kg</span>
-              </div>
-            `;
-            container.appendChild(div);
-          });
-        });
-
-        const catEl = document.getElementById(`catWeight${c}`);
-        if (catEl) catEl.innerText = `${catWeight.toFixed(2)} kg`;
-      }
-
-      const pEl = document.getElementById('packWeight');
-      if (pEl) pEl.innerText = packTotal.toFixed(2);
-      
-      const wEl = document.getElementById('wornWeight');
-      if (wEl) wEl.innerText = wornTotal.toFixed(2);
-
-      const tEl = document.getElementById('totalWeight');
-      if (tEl) tEl.innerText = (packTotal + wornTotal).toFixed(2);
-    }
-
-    function updatePackQty(itemId, val) {
-      const item = userPackItems.find(i => i.id === itemId);
-      if (item) {
-        item.qty = val === "" ? "" : Math.max(0, parseInt(val, 10) || 0);
-        safeSetStorage('camino_pack_items_v14', JSON.stringify(userPackItems));
-        renderPackingList();
-      }
-    }
-
-    function toggleWorn(itemId, checked) {
-      const item = userPackItems.find(i => i.id === itemId);
-      if (item) {
-        item.worn = checked;
-        safeSetStorage('camino_pack_items_v14', JSON.stringify(userPackItems));
-        renderPackingList();
-      }
-    }
-
-    function addNewItem(event) {
-      event.preventDefault();
-      
-      const nameInput = document.getElementById('newItemName');
-      const catSelect = document.getElementById('newItemCat');
-      const weightInput = document.getElementById('newItemWeight');
-
-      const name = nameInput.value.trim();
-      const [catStr, subcatStr] = catSelect.value.split('|');
-      const cat = parseInt(catStr, 10);
-      const weightGram = parseFloat(weightInput.value);
-
-      if (!name || isNaN(weightGram) || weightGram <= 0) {
-        alert("Bitte gib einen gültigen Namen und ein Gewicht in Gramm ein.");
-        return;
-      }
-
-      const newItem = {
-        id: Date.now(),
-        cat: cat,
-        subcat: subcatStr,
-        name: name,
-        weight: weightGram / 1000,
-        qty: 1,
-        worn: false
-      };
-
-      userPackItems.push(newItem);
-      safeSetStorage('camino_pack_items_v14', JSON.stringify(userPackItems));
-      
-      nameInput.value = '';
-      weightInput.value = '';
-      renderPackingList();
-    }
-
-    function initMapAndChart() {
+    /* Karten- & Chart-Initialisierung */
+    function initMap() {
       const intlPoints = {
-        muenchen: { name: "München (MUC)", lat: 48.3537, lng: 11.7861, desc: "<b>Start & Ziel</b><br>✈️ 04.09.: Flug IB1310 nach Madrid (12:10)<br>✈️ 22.09.: Rückflug UX1517 Ankunft aus Madrid" },
+        muenchen: { name: "München (MUC)", lat: 48.3537, lng: 11.7861, desc: "<b>Start & Ziel</b><br>✈️ 04.09.: Flug IB1310 nach Madrid (12:10)<br>✈️ 22.09.: Rückflug UX1517 Ankunft aus Madrid (17:35)" },
         madrid: { name: "Madrid Barajas (MAD)", lat: 40.4839, lng: -3.5680, desc: "<b>Drehkreuz Madrid</b><br>✈️ 04.09.: Ankunft IB1310 ➔ 🚆 Zug nach León (17:30)<br>✈️ 22.09.: Ankunft IB518 (T4, 09:20) ➔ Shuttle zu T2 ➔ Flug UX1517 (15:10)" },
-        leon: { name: "León", lat: 42.5987, lng: -5.5671, desc: "<b>Zwischenstopp Anreise (04.09. - 05.09.)</b><br>🚆 Ankunft per Zug 19:47 Uhr<br>🏨 <b>Leon Hostel Jabalquinto</b><br>🚌 05.09.: Bus nach Oviedo" },
-        fisterra: { name: "Kap Fisterra / Finisterre", lat: 42.9086, lng: -9.2632, desc: "<b>🌊 Ende der Welt (19.09. – 21.09.)</b><br>🚌 Busfahrt von Santiago am Sa (19.09.)<br>🌅 Sonnenuntergang am Kap & Strandtage<br>🚌 Busrückfahrt nach Santiago am Mo (21.09.)" }
+        fisterra: { name: "Kap Fisterra / Finisterre", lat: 42.9086, lng: -9.2632, desc: "<b>🌊 Ende der Welt (19.09. – 21.09.)</b><br>🚌 Busfahrt von Santiago am Sa (19.09.)<br>🌅 Sonnenuntergang am Kap & Strandtage" }
       };
 
       const waypoints = [
-        { name: "Oviedo", lat: 43.3619, lng: -5.8494, date: "05.09. & 06.09.", info: "Ankunft per Bus aus León | 🏨 La Hospederia<br>Start Kathedrale Oviedo", region: "Asturien", color: "#6b21a8", ele: 230 },
+        { name: "León", lat: 42.5987, lng: -5.5671, date: "04.09. - 05.09.", info: "Ankunft per Zug | 🏨 Leon Hostel Jabalquinto", region: "Anreise", color: "#6b21a8", ele: 830 },
+        { name: "Oviedo", lat: 43.3619, lng: -5.8494, date: "05.09. & 06.09.", info: "Kathedrale Oviedo | 🏨 La Hospederia", region: "Asturien", color: "#6b21a8", ele: 230 },
         { name: "Grado", lat: 43.3889, lng: -6.0718, date: "06.09. (Etappe 1)", info: "Etappe 1: 26,5 km | 620 hm ↑", region: "Asturien", color: "#0369a1", ele: 60 },
         { name: "Salas", lat: 43.4131, lng: -6.2597, date: "07.09. (Etappe 2)", info: "Etappe 2: 22,1 km | 490 hm ↑", region: "Asturien", color: "#0369a1", ele: 240 },
         { name: "Tineo", lat: 43.3364, lng: -6.4158, date: "08.09. (Etappe 3)", info: "Etappe 3: 19,9 km | 780 hm ↑", region: "Asturien", color: "#0369a1", ele: 675 },
         { name: "Borres", lat: 43.3258, lng: -6.5369, date: "09.09. (Etappe 4)", info: "Etappe 4: 15,7 km | 520 hm ↑", region: "Asturien", color: "#0369a1", ele: 630 },
-        { name: "Berducedo", lat: 43.2758, lng: -6.8394, date: "10.09. (Etappe 5)", info: "Etappe 5 (Königsetappe): 24,6 km | 1.100 hm ↑ (via Hospitales - Pass 1.140 m)", region: "Königsetappe", color: "#be123c", ele: 900 },
-        { name: "Grandas de Salime", lat: 43.2147, lng: -6.9208, date: "11.09. (Etappe 6)", info: "Etappe 6: 20,3 km | 320 hm ↑ (Embalse de Salime 220 m)", region: "Asturien", color: "#0369a1", ele: 562 },
-        { name: "A Fonsagrada", lat: 43.1256, lng: -7.0700, date: "12.09. (Etappe 7)", info: "Etappe 7: 25,7 km | 930 hm ↑ (Puerto del Acebo 1.030 m)", region: "Galicien", color: "#047857", ele: 950 },
-        { name: "O Cádavo", lat: 43.0189, lng: -7.3061, date: "13.09. (Etappe 8)", info: "Etappe 8: 24,4 km | 610 hm ↑ (Alto da Vaqueriza 910 m)", region: "Galicien", color: "#047857", ele: 710 },
-        { name: "Lugo", lat: 43.0097, lng: -7.5568, date: "14.09. (Etappe 9)", info: "Etappe 9: 30,6 km | 480 hm ↑ (Römische Stadtmauer)", region: "Galicien", color: "#047857", ele: 465 },
+        { name: "Berducedo", lat: 43.2758, lng: -6.8394, date: "10.09. (Etappe 5)", info: "Etappe 5 (Königsetappe): 24,6 km | 1.100 hm ↑", region: "Königsetappe", color: "#be123c", ele: 900 },
+        { name: "Grandas de Salime", lat: 43.2147, lng: -6.9208, date: "11.09. (Etappe 6)", info: "Etappe 6: 20,3 km | 320 hm ↑", region: "Asturien", color: "#0369a1", ele: 562 },
+        { name: "A Fonsagrada", lat: 43.1256, lng: -7.0700, date: "12.09. (Etappe 7)", info: "Etappe 7: 25,7 km | 930 hm ↑", region: "Galicien", color: "#047857", ele: 950 },
+        { name: "O Cádavo", lat: 43.0189, lng: -7.3061, date: "13.09. (Etappe 8)", info: "Etappe 8: 24,4 km | 610 hm ↑", region: "Galicien", color: "#047857", ele: 710 },
+        { name: "Lugo", lat: 43.0097, lng: -7.5568, date: "14.09. (Etappe 9)", info: "Etappe 9: 30,6 km | 480 hm ↑", region: "Galicien", color: "#047857", ele: 465 },
         { name: "Ferreira", lat: 42.9231, lng: -7.8089, date: "15.09. (Etappe 10)", info: "Etappe 10: 27,1 km | 380 hm ↑", region: "Galicien", color: "#047857", ele: 450 },
-        { name: "Boente", lat: 42.8683, lng: -8.0125, date: "16.09. (Etappe 11)", info: "Etappe 11: 26,0 km | 420 hm ↑ (Einmündung Camino Francés)", region: "Galicien", color: "#047857", ele: 360 },
+        { name: "Boente", lat: 42.8683, lng: -8.0125, date: "16.09. (Etappe 11)", info: "Etappe 11: 26,0 km | 420 hm ↑", region: "Galicien", color: "#047857", ele: 360 },
         { name: "A Rúa", lat: 42.9036, lng: -8.3183, date: "17.09. (Etappe 12)", info: "Etappe 12: 26,2 km | 340 hm ↑", region: "Galicien", color: "#047857", ele: 310 },
-        { name: "Santiago de Compostela", lat: 42.8805, lng: -8.5457, date: "18.09. & 21.09.", info: "Kathedrale Santiago<br>🏡 Nacht 1: 18.09. (Fr)<br>🚌 Ausflug Fisterra: 19.09. - 21.09.<br>🏡 Letzte Nacht: 21.09. (Mo)<br>✈️ Rückflug: 22.09. (Di)", region: "Ziel", color: "#ca8a04", ele: 260 }
+        { name: "Santiago de Compostela", lat: 42.8805, lng: -8.5457, date: "18.09. & 21.09.", info: "Kathedrale Santiago | Ziel", region: "Ziel", color: "#ca8a04", ele: 260 }
       ];
-
-      const mapContainer = document.getElementById('map');
-      if (!mapContainer) return;
 
       const lightMap = L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', { maxZoom: 19 });
       const darkMap = L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', { maxZoom: 19 });
@@ -1003,7 +1237,7 @@
       map = L.map('map', { layers: [lightMap] });
 
       L.control.layers({
-        "☀️ Hellmodus": lightMap,
+        "☀️ Hellmodus (Standard)": lightMap,
         "🌙 Dunkelmodus": darkMap,
         "⛰️ Topografisch": topoMap
       }).addTo(map);
@@ -1013,27 +1247,27 @@
 
       waypoints.forEach((wp, index) => {
         const pt = [wp.lat, wp.lng];
-        latlngs.push(pt);
+        if (index > 0) latlngs.push(pt);
         allBounds.push(pt);
 
         const popupContent = `
-          <div style="color: #0f172a; font-family: 'Plus Jakarta Sans', sans-serif; min-width: 210px; padding: 2px;">
+          <div style="color: #0f172a; font-family: 'Plus Jakarta Sans', sans-serif; min-width: 200px;">
             <div style="font-size: 0.75rem; font-weight: 800; color: ${wp.color}; text-transform: uppercase; margin-bottom: 2px;">${wp.date}</div>
-            <h3 style="margin: 0 0 8px 0; font-size: 1.05rem; color: #1e3a8a; border-bottom: 1px solid #e2e8f0; padding-bottom: 4px; font-weight: 800;">
-              ${index === 0 ? '🏁 Start Camino' : (index === waypoints.length - 1 ? '🎉 Ziel Santiago' : 'Etappe ' + index)}: ${wp.name}
-            </h3>
-            <div style="font-size: 0.85rem; margin-bottom: 6px; line-height: 1.3; color: #334155;">${wp.info}</div>
+            <h3 style="margin: 0 0 8px 0; font-size: 1.05rem; color: #1e3a8a; border-bottom: 1px solid #ddd; padding-bottom: 4px;">${wp.name}</h3>
+            <div style="font-size: 0.85rem; margin-bottom: 6px; color: #334155;">${wp.info}</div>
             <div style="font-size: 0.82rem; color: #52525b;"><strong>📍 Seehöhe:</strong> ca. ${wp.ele} m.ü.NHN</div>
           </div>
         `;
 
-        L.circleMarker(pt, {
+        const marker = L.circleMarker(pt, {
           color: wp.color,
           fillColor: wp.color,
           fillOpacity: 0.9,
-          radius: index === 0 || index === waypoints.length - 1 || wp.region === 'Königsetappe' ? 9 : 6,
+          radius: wp.region === 'Königsetappe' || wp.region === 'Ziel' ? 9 : 6,
           weight: 2
         }).addTo(map).bindPopup(popupContent);
+
+        markers[wp.name] = { marker, lat: wp.lat, lng: wp.lng };
       });
 
       L.polyline(latlngs, { color: '#ca8a04', weight: 4, opacity: 0.9, dashArray: '6, 8' }).addTo(map);
@@ -1045,33 +1279,41 @@
 
         const markerColor = key === 'fisterra' ? '#0e7490' : '#6b21a8';
 
-        L.circleMarker(pt, {
-          color: markerColor,
-          fillColor: markerColor,
-          fillOpacity: 0.9,
-          radius: 8,
-          weight: 2
-        }).addTo(map).bindPopup(`
-          <div style="color: #0f172a; font-family: 'Plus Jakarta Sans', sans-serif; min-width: 200px;">
-            <h3 style="margin: 0 0 6px 0; font-size: 1rem; border-bottom: 1px solid #e2e8f0; padding-bottom: 4px; color: ${key === 'fisterra' ? '#0e7490' : '#6b21a8'}; font-weight:800;">📍 ${p.name}</h3>
-            <div style="font-size: 0.85rem; color: #334155; line-height: 1.4;">${p.desc}</div>
-          </div>
-        `);
+        const marker = L.circleMarker(pt, { color: markerColor, fillColor: markerColor, fillOpacity: 0.9, radius: 7, weight: 2 })
+          .addTo(map).bindPopup(`<div style="color: #0f172a; font-family: sans-serif;"><b>📍 ${p.name}</b><br>${p.desc}</div>`);
+
+        markers[p.name] = { marker, lat: p.lat, lng: p.lng };
       });
 
       L.polyline([[intlPoints.muenchen.lat, intlPoints.muenchen.lng], [intlPoints.madrid.lat, intlPoints.madrid.lng]], { color: '#6b21a8', weight: 2, opacity: 0.8, dashArray: '4, 8' }).addTo(map);
-      L.polyline([[intlPoints.madrid.lat, intlPoints.madrid.lng], [intlPoints.leon.lat, intlPoints.leon.lng]], { color: '#0369a1', weight: 3, opacity: 0.8 }).addTo(map);
-      L.polyline([[intlPoints.leon.lat, intlPoints.leon.lng], [waypoints[0].lat, waypoints[0].lng]], { color: '#0369a1', weight: 3, opacity: 0.8 }).addTo(map);
+      L.polyline([[intlPoints.madrid.lat, intlPoints.madrid.lng], [waypoints[0].lat, waypoints[0].lng]], { color: '#0369a1', weight: 3, opacity: 0.8 }).addTo(map);
+      L.polyline([[waypoints[0].lat, waypoints[0].lng], [waypoints[1].lat, waypoints[1].lng]], { color: '#0369a1', weight: 3, opacity: 0.8 }).addTo(map);
       L.polyline([[waypoints[waypoints.length-1].lat, waypoints[waypoints.length-1].lng], [intlPoints.fisterra.lat, intlPoints.fisterra.lng]], { color: '#0e7490', weight: 3, opacity: 0.9, dashArray: '5, 5' }).addTo(map);
       L.polyline([[waypoints[waypoints.length-1].lat, waypoints[waypoints.length-1].lng], [intlPoints.madrid.lat, intlPoints.madrid.lng]], { color: '#be123c', weight: 2, opacity: 0.8, dashArray: '4, 8' }).addTo(map);
       L.polyline([[intlPoints.madrid.lat, intlPoints.madrid.lng], [intlPoints.muenchen.lat, intlPoints.muenchen.lng]], { color: '#be123c', weight: 2, opacity: 0.8, dashArray: '4, 8' }).addTo(map);
 
-      map.fitBounds(allBounds, { padding: [30, 30] });
+      // Legende zur Karte
+      const legend = L.control({ position: 'bottomright' });
+      legend.onAdd = function () {
+        const div = L.DomUtil.create('div', 'map-legend');
+        div.innerHTML = `
+          <div class="legend-title">Orte & Regionen</div>
+          <div class="legend-item"><div class="legend-color-dot" style="background:#0369a1;"></div> Asturien (Etappen 1–6)</div>
+          <div class="legend-item"><div class="legend-color-dot" style="background:#be123c;"></div> Königsetappe (Hospitales)</div>
+          <div class="legend-item"><div class="legend-color-dot" style="background:#047857;"></div> Galicien (Etappen 7–13)</div>
+          <div class="legend-item"><div class="legend-color-dot" style="background:#ca8a04;"></div> Ziel Santiago de Compostela</div>
+          <div class="legend-item"><div class="legend-color-dot" style="background:#0e7490;"></div> Kap Fisterra (Atlantik)</div>
+        `;
+        return div;
+      };
+      legend.addTo(map);
 
+      map.fitBounds(allBounds, { padding: [40, 40] });
+
+      /* ECHTES HÖHENPROFIL UNTERHALB DER KARTE */
       const chartCanvas = document.getElementById('elevationChart');
       if (chartCanvas) {
         const ctx = chartCanvas.getContext('2d');
-        
         const profileLabels = [
           'Oviedo', 'Grado', 'Salas', 'Tineo', 'Borres', 
           'Hospitales (Pass 1140m)', 'Berducedo', 'Stausee Salime (220m)', 'Grandas', 
@@ -1133,14 +1375,12 @@
           }
         });
       }
-
-      setTimeout(() => { if (map) map.invalidateSize(); }, 300);
     }
 
     window.addEventListener('DOMContentLoaded', () => {
-      renderPlan();
-      renderPackingList();
-      initMapAndChart();
+      renderPlanTable();
+      initMap();
+      loadPacklist();
     });
   </script>
 </body>
