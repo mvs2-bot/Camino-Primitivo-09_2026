@@ -18,26 +18,22 @@
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
   <style>
-    /* ==========================================================================
-       1. FARBEN & DESIGNEINSTELLUNGEN (HELLMODUS)
-       ========================================================================== */
     :root {
-      --bg: #f8fafc;           /* Haupt-Hintergrund (Hell) */
-      --card-bg: #ffffff;      /* Karten & Tabellen-Hintergrund */
-      --border: #e2e8f0;       /* Rahmentöne */
-      --text: #334155;         /* Standard-Textfarbe */
-      --text-main: #0f172a;    /* Überschriften & wichtige Texte */
-      --text-muted: #64748b;   /* Nebensächlicher Text / Datumsangaben */
+      --bg: #f8fafc;
+      --card-bg: #ffffff;
+      --border: #e2e8f0;
+      --text: #334155;
+      --text-main: #0f172a;
+      --text-muted: #64748b;
       
-      /* Akzentfarben */
-      --primary: #d97706;      /* Jakobsweg Gelb / Amber */
+      --primary: #d97706;
       --primary-rgb: 217, 119, 6;
-      --asturien: #0284c7;     /* Blau (Asturien) */
-      --galicien: #059669;     /* Grün (Galicien) */
-      --anreise: #7c3aed;      /* Violett (Anreise / Abreise) */
-      --fisterra: #0891b2;     /* Cyan / Türkis (Fisterra) */
-      --koenigsetappe: #e11d48;/* Rot (Hospitales-Route) */
-      --ziel: #ca8a04;         /* Gold (Santiago) */
+      --asturien: #0284c7;
+      --galicien: #059669;
+      --anreise: #7c3aed;
+      --fisterra: #0891b2;
+      --koenigsetappe: #e11d48;
+      --ziel: #ca8a04;
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -52,7 +48,6 @@
 
     .container { max-width: 1280px; margin: 0 auto; }
 
-    /* Tab Nav */
     .tab-nav {
       display: flex;
       gap: 10px;
@@ -127,7 +122,6 @@
 
     .stat-pill strong { color: var(--primary); }
 
-    /* Map & Elevation Section */
     .map-section {
       background: var(--card-bg);
       border: 1px solid var(--border);
@@ -155,11 +149,10 @@
       padding: 16px;
       border-radius: 8px;
       border: 1px solid var(--border);
-      height: 180px;
+      height: 200px;
       position: relative;
     }
 
-    /* Controls & Table */
     .controls { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 20px; }
 
     .search-input {
@@ -273,7 +266,6 @@
     .action-btn { background: #ecfdf5; color: #047857; border-color: #a7f3d0; transition: all 0.2s; }
     .action-btn:hover { background: #d1fae5; }
 
-    /* Packing List Grid & Cards */
     .packing-grid {
       display: grid;
       grid-template-columns: 1fr;
@@ -299,6 +291,18 @@
       padding-bottom: 6px;
     }
 
+    .subcat-header {
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--text-main);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      background: #f1f5f9;
+      padding: 4px 8px;
+      border-radius: 4px;
+      margin: 12px 0 6px 0;
+    }
+
     .weight-tag { font-size: 0.78rem; color: var(--text-muted); font-weight: 600; }
 
     .pack-item-row {
@@ -306,7 +310,7 @@
       align-items: center;
       justify-content: space-between;
       gap: 10px;
-      padding: 10px 0;
+      padding: 6px 0;
       border-bottom: 1px dashed var(--border);
       flex-wrap: wrap;
     }
@@ -316,7 +320,7 @@
       align-items: center;
       gap: 10px;
       flex: 1;
-      min-width: 200px;
+      min-width: 220px;
     }
 
     .qty-input {
@@ -363,7 +367,6 @@
       gap: 12px;
     }
 
-    /* Emergency & Quick Info Box */
     .info-grid {
       display: grid;
       grid-template-columns: 1fr;
@@ -393,7 +396,6 @@
 <body>
   <div class="container">
     
-    <!-- Hauptnavigation / Tabs -->
     <div class="tab-nav">
       <button class="tab-btn active" onclick="switchTab('plan-tab', this)">🗺️ Routenplaner & Karte</button>
       <button class="tab-btn" onclick="switchTab('pack-tab', this)">🎒 Packliste & Rechner</button>
@@ -415,9 +417,8 @@
         </div>
       </header>
 
-      <!-- Karten- & Höhenprofil-Sektion -->
       <div class="map-section">
-        <h2>🗺️ Interaktive Karte & Höhenprofil</h2>
+        <h2>🗺️ Interaktive Karte & Echtes Höhenprofil (m.ü.NHN)</h2>
         <div id="map"></div>
         
         <div class="chart-container">
@@ -425,7 +426,6 @@
         </div>
       </div>
 
-      <!-- Controls & Filter -->
       <div class="controls">
         <input type="text" id="searchInput" class="search-input" placeholder="Nach Etappen, Orten, Flügen, Zügen, Fisterra oder Unterkünften suchen..." onkeyup="filterPlan()">
         <button class="filter-btn active" onclick="setFilter('all', this)">Alle Tage</button>
@@ -437,7 +437,6 @@
         <button class="filter-btn" onclick="setFilter('Abreise', this)">Heimreise</button>
       </div>
 
-      <!-- Desktop Ansicht (Tabelle) -->
       <div class="table-wrapper">
         <table id="planTable">
           <thead>
@@ -455,7 +454,6 @@
         </table>
       </div>
 
-      <!-- Mobile Cards Ansicht -->
       <div class="mobile-cards" id="mobileCards"></div>
     </div>
 
@@ -464,7 +462,7 @@
       <header>
         <div class="title-group">
           <h1>🎒 Packliste & Gewichtsrechner</h1>
-          <p>Behalte die Kontrolle über dein Rucksackgewicht (Inkl. deiner Original-Packliste)</p>
+          <p>Behalte die Kontrolle über dein Rucksackgewicht (Exakt nach deiner PDF-Ausrüstungsliste)</p>
         </div>
         <div class="stats-bar">
           <div class="stat-pill">🎒 Im Rucksack: &nbsp;<strong id="packWeight">0,00</strong> kg</div>
@@ -475,11 +473,11 @@
 
       <div class="packing-grid">
         <div class="packing-card">
-          <h3><span>🎒 Tragesystem, Schlafen & Org</span> <span class="weight-tag" id="catWeight1">0.00 kg</span></h3>
+          <h3><span>🎒 Tragesystem, Schlafen & Organisation</span> <span class="weight-tag" id="catWeight1">0.00 kg</span></h3>
           <div id="packCat1"></div>
         </div>
         <div class="packing-card">
-          <h3><span>👕 Bekleidung & Wanderausrüstung</span> <span class="weight-tag" id="catWeight2">0.00 kg</span></h3>
+          <h3><span>👕 Bekleidung, Ausrüstung & Schuhe</span> <span class="weight-tag" id="catWeight2">0.00 kg</span></h3>
           <div id="packCat2"></div>
         </div>
         <div class="packing-card">
@@ -487,9 +485,46 @@
           <div id="packCat3"></div>
         </div>
         <div class="packing-card">
-          <h3><span>🧴 Hygiene, Medis & Dokumente</span> <span class="weight-tag" id="catWeight4">0.00 kg</span></h3>
+          <h3><span>🧴 Körperpflege, Medis & Dokumente</span> <span class="weight-tag" id="catWeight4">0.00 kg</span></h3>
           <div id="packCat4"></div>
         </div>
+      </div>
+
+      <!-- Formular: Neuer Gegenstand mit allen 14 Unterkategorien -->
+      <div class="packing-card" style="margin-top: 24px;">
+        <h3>➕ Neuen Gegenstand zur Packliste hinzufügen</h3>
+        <form onsubmit="addNewItem(event)" style="display: flex; gap: 12px; flex-wrap: wrap; margin-top: 12px; align-items: center;">
+          <input type="text" id="newItemName" placeholder="Gegenstand (z.B. Blasenpflaster XL)" required style="flex: 2; min-width: 200px; padding: 8px 12px; border: 1px solid var(--border); border-radius: 6px;">
+          
+          <select id="newItemCat" style="flex: 1.5; min-width: 200px; padding: 8px 12px; border: 1px solid var(--border); border-radius: 6px; background: var(--card-bg);">
+            <optgroup label="Tragesystem & Schlafen">
+              <option value="1|Tragesystem & Schlafen">Tragesystem & Schlafen</option>
+              <option value="1|Organisation & Ordnung">Organisation & Ordnung</option>
+            </optgroup>
+            <optgroup label="Bekleidung & Ausrüstung">
+              <option value="2|Bekleidung (Wandern)">Bekleidung (Wandern)</option>
+              <option value="2|Bekleidung (Wärme & Kälte)">Bekleidung (Wärme & Kälte)</option>
+              <option value="2|Regenschutzausrüstung">Regenschutzausrüstung</option>
+              <option value="2|Schuhe & Fußbekleidung">Schuhe & Fußbekleidung</option>
+              <option value="2|Bekleidung (Unterwäsche & Socken)">Bekleidung (Unterwäsche & Socken)</option>
+              <option value="2|Sonnenschutz & Accessoires">Sonnenschutz & Accessoires</option>
+              <option value="2|Hydration & Ausrüstung">Hydration & Ausrüstung</option>
+              <option value="2|Wäsche, Werkzeug & Notfall">Wäsche, Werkzeug & Notfall</option>
+            </optgroup>
+            <optgroup label="Elektronik">
+              <option value="3|Elektronik & Navigation">Elektronik & Navigation</option>
+            </optgroup>
+            <optgroup label="Hygiene & Dokumente">
+              <option value="4|Körperpflege & Hygiene">Körperpflege & Hygiene</option>
+              <option value="4|Erste Hilfe & Apotheke">Erste Hilfe & Apotheke</option>
+              <option value="4|Dokumente & Tagebuch">Dokumente & Tagebuch</option>
+            </optgroup>
+          </select>
+          
+          <input type="number" id="newItemWeight" placeholder="Gewicht (Gramm)" step="1" min="1" required style="width: 140px; padding: 8px 12px; border: 1px solid var(--border); border-radius: 6px;">
+          
+          <button type="submit" class="filter-btn active" style="padding: 8px 16px; cursor: pointer;">Hinzufügen</button>
+        </form>
       </div>
     </div>
 
@@ -534,9 +569,6 @@
   </div>
 
   <script>
-    /* ==========================================================================
-       DATENBANK FÜR ETAPPEN & LOGISTIK
-       ========================================================================== */
     const rawData = [
       { id: "A1", badge: "Anreise", date: "04.09. (Fr)", region: "Anreise", title: "München ➔ Madrid ➔ León", desc: "Flug IB1310 um 12:10 Uhr ab MUC. Zug um 17:30 nach León (Ankunft 19:47).", transport: "✈️ IB1310 | 🚆 Zug (17:30)", hotel: "🏨 Leon Hostel Jabalquinto", km: 0, lat: 42.5987, lng: -5.5671, weatherLoc: "Leon,Spain" },
       { id: "A2", badge: "Anreise", date: "05.09. (Sa)", region: "Anreise", title: "León ➔ Oviedo", desc: "Morgens Erkundung León. Busfahrt nach Oviedo & Akklimatisierung.", transport: "🚌 Fernbus", hotel: "🏨 La Hospederia", km: 0, lat: 43.3619, lng: -5.8494, weatherLoc: "Oviedo,Spain" },
@@ -559,45 +591,89 @@
       { id: "R1", badge: "Abreise", date: "22.09. (Di)", region: "Abreise", title: "Santiago ➔ Madrid ➔ München", desc: "09:20 Uhr: IB518 nach Madrid T4. Transfer zu T2. 15:10 Uhr: UX1517 nach MUC.", transport: "✈️ IB518 ➔ Shuttle ➔ ✈️ UX1517", hotel: "🏠 Ankunft München", km: 0, lat: 48.3537, lng: 11.7861, weatherLoc: "Munich,Germany" }
     ];
 
-    /* ==========================================================================
-       PACKLISTEN DATENBANK MIT GEWICHTEN
-       ========================================================================== */
     const packingData = [
-      { id: 1, cat: 1, name: "Trekkingrucksack (35 L) + Regenhülle", weight: 1.000, qty: "", worn: false },
-      { id: 2, cat: 1, name: "Hüttenschlafsack Seide", weight: 0.179, qty: "", worn: false },
-      { id: 3, cat: 1, name: "Kissenbezug Seide", weight: 0.055, qty: "", worn: false },
-      { id: 4, cat: 1, name: "Packsäcke / Drybags (3er Set)", weight: 0.090, qty: "", worn: false },
-      { id: 5, cat: 1, name: "Umhängetasche", weight: 0.180, qty: "", worn: false },
-      { id: 6, cat: 1, name: "Kulturtbeutel & Zip Beutel (Set)", weight: 0.104, qty: "", worn: false },
-
-      { id: 7, cat: 2, name: "Wanderhose lang & kurz", weight: 0.628, qty: "", worn: false },
-      { id: 8, cat: 2, name: "Wandersandalen Teva (gut eingelaufen!)", weight: 0.574, qty: "", worn: false },
-      { id: 9, cat: 2, name: "Badelatschen (für Abends/Dusche)", weight: 0.204, qty: "", worn: false },
-      { id: 10, cat: 2, name: "Funktions-T-Shirts (Merino & Columbia)", weight: 0.285, qty: "", worn: false },
-      { id: 11, cat: 2, name: "Langarm-Sunhoodie & Thermo Unterhemd", weight: 0.330, qty: "", worn: false },
-      { id: 12, cat: 2, name: "Fleecepullover & Warme Jacke Decathlon", weight: 0.751, qty: "", worn: false },
-      { id: 13, cat: 2, name: "Regenponcho & Windjacke", weight: 0.347, qty: "", worn: false },
-      { id: 14, cat: 2, name: "Unterwäsche, Socken & Gürtel", weight: 0.222, qty: "", worn: false },
-      { id: 15, cat: 2, name: "Buff, Sonnenhut & Sonnenbrille", weight: 0.139, qty: "", worn: false },
-
-      { id: 16, cat: 3, name: "Smartphone + Ladezubehör", weight: 0.343, qty: "", worn: false },
-      { id: 17, cat: 3, name: "Powerbank (10.000 mAh)", weight: 0.200, qty: "", worn: false },
-      { id: 18, cat: 3, name: "Kopflampe LED + Lampe", weight: 0.091, qty: "", worn: false },
-      { id: 19, cat: 3, name: "Kopfhörer", weight: 0.045, qty: "", worn: false },
-      { id: 20, cat: 3, name: "Elektr. Rasierer + Adapter", weight: 0.209, qty: "", worn: false },
-
-      { id: 21, cat: 4, name: "Mikrofaser-Handtücher (2x)", weight: 0.309, qty: "", worn: false },
-      { id: 22, cat: 4, name: "Pflege & Körperhygiene", weight: 0.625, qty: "", worn: false },
-      { id: 23, cat: 4, name: "Erste-Hilfe, Medis, Hirschtalg & Bandagen", weight: 0.492, qty: "", worn: false },
-      { id: 24, cat: 4, name: "Oropax (Essentiell für Albergues!)", weight: 0.020, qty: "", worn: false },
-      { id: 25, cat: 4, name: "Dokumente, Credencial & Tagebuch", weight: 0.232, qty: "", worn: false },
-      { id: 26, cat: 4, name: "Trekkingstöcke (Paar) & Trinkflaschen (2x)", weight: 0.450, qty: "", worn: false },
-      { id: 27, cat: 4, name: "Wäsche, Werkzeug & Notfallbiwak", weight: 0.259, qty: "", worn: false }
+      { id: 1, cat: 1, subcat: "Tragesystem & Schlafen", name: "Trekkingrucksack (35 L)", weight: 1.000, qty: "", worn: false },
+      { id: 2, cat: 1, subcat: "Tragesystem & Schlafen", name: "Hüttenschlafsack Seide", weight: 0.179, qty: "", worn: false },
+      { id: 3, cat: 1, subcat: "Tragesystem & Schlafen", name: "Kissenbezug Seide", weight: 0.055, qty: "", worn: false },
+      { id: 4, cat: 1, subcat: "Organisation & Ordnung", name: "Packsäcke / Drybags (Set)", weight: 0.030, qty: "", worn: false },
+      { id: 5, cat: 1, subcat: "Organisation & Ordnung", name: "Umhängetasche", weight: 0.180, qty: "", worn: false },
+      { id: 6, cat: 1, subcat: "Organisation & Ordnung", name: "Kulturtbeutel leer", weight: 0.072, qty: "", worn: false },
+      { id: 7, cat: 1, subcat: "Organisation & Ordnung", name: "Zip Beutel für Cremes", weight: 0.020, qty: "", worn: false },
+      { id: 8, cat: 1, subcat: "Organisation & Ordnung", name: "Zip Beutel für Elektrozeugs", weight: 0.012, qty: "", worn: false },
+      { id: 9, cat: 2, subcat: "Bekleidung (Wandern)", name: "Wanderhose lang", weight: 0.366, qty: "", worn: false },
+      { id: 10, cat: 2, subcat: "Bekleidung (Wandern)", name: "Wanderhose kurz", weight: 0.262, qty: "", worn: false },
+      { id: 11, cat: 2, subcat: "Bekleidung (Wandern)", name: "Gürtel für Wanderhose", weight: 0.036, qty: "", worn: false },
+      { id: 12, cat: 2, subcat: "Bekleidung (Wandern)", name: "Funktions-T-Shirt (Merino)", weight: 0.135, qty: "", worn: false },
+      { id: 13, cat: 2, subcat: "Bekleidung (Wandern)", name: "Funktions-T-Shirt (Columbia)", weight: 0.150, qty: "", worn: false },
+      { id: 14, cat: 2, subcat: "Bekleidung (Wandern)", name: "Langarm-Sunhoodie (Midlayer)", weight: 0.200, qty: "", worn: false },
+      { id: 15, cat: 2, subcat: "Bekleidung (Wandern)", name: "Thermo Unterhemd Adidas", weight: 0.130, qty: "", worn: false },
+      { id: 16, cat: 2, subcat: "Bekleidung (Wandern)", name: "Tanktop Mikrofaser", weight: 0.050, qty: "", worn: false },
+      { id: 17, cat: 2, subcat: "Bekleidung (Wärme & Kälte)", name: "Fleecepullover für abends", weight: 0.251, qty: "", worn: false },
+      { id: 18, cat: 2, subcat: "Bekleidung (Wärme & Kälte)", name: "Warme Jacke Decathlon", weight: 0.500, qty: "", worn: false },
+      { id: 19, cat: 2, subcat: "Bekleidung (Wärme & Kälte)", name: "Handschuhe", weight: 0.028, qty: "", worn: false },
+      { id: 20, cat: 2, subcat: "Bekleidung (Wärme & Kälte)", name: "Badehose", weight: 0.070, qty: "", worn: false },
+      { id: 21, cat: 2, subcat: "Regenschutzausrüstung", name: "Regenponcho", weight: 0.274, qty: "", worn: false },
+      { id: 22, cat: 2, subcat: "Regenschutzausrüstung", name: "Windjacke", weight: 0.073, qty: "", worn: false },
+      { id: 23, cat: 2, subcat: "Schuhe & Fußbekleidung", name: "Wandersandalen Teva", weight: 0.574, qty: "", worn: false },
+      { id: 24, cat: 2, subcat: "Schuhe & Fußbekleidung", name: "Badelatschen", weight: 0.204, qty: "", worn: false },
+      { id: 25, cat: 2, subcat: "Bekleidung (Unterwäsche & Socken)", name: "Wandersocken (Merino)", weight: 0.040, qty: "", worn: false },
+      { id: 26, cat: 2, subcat: "Bekleidung (Unterwäsche & Socken)", name: "Funktionsunterwäsche (beim Gehen)", weight: 0.073, qty: "", worn: false },
+      { id: 27, cat: 2, subcat: "Bekleidung (Unterwäsche & Socken)", name: "Funktionsunterwäsche", weight: 0.073, qty: "", worn: false },
+      { id: 28, cat: 2, subcat: "Sonnenschutz & Accessoires", name: "Buff / Schlauchtuch", weight: 0.045, qty: "", worn: false },
+      { id: 29, cat: 2, subcat: "Sonnenschutz & Accessoires", name: "Sonnenhut", weight: 0.064, qty: "", worn: false },
+      { id: 30, cat: 2, subcat: "Sonnenschutz & Accessoires", name: "Sonnenbrille", weight: 0.030, qty: "", worn: false },
+      { id: 31, cat: 2, subcat: "Sonnenschutz & Accessoires", name: "Sonnencreme", weight: 0.060, qty: "", worn: false },
+      { id: 32, cat: 2, subcat: "Sonnenschutz & Accessoires", name: "Lippenbalsam", weight: 0.009, qty: "", worn: false },
+      { id: 33, cat: 2, subcat: "Hydration & Ausrüstung", name: "Leere Wasserflasche", weight: 0.025, qty: "", worn: false },
+      { id: 34, cat: 2, subcat: "Hydration & Ausrüstung", name: "Trekkingstöcke (Paar)", weight: 0.400, qty: "", worn: false },
+      { id: 35, cat: 2, subcat: "Wäsche, Werkzeug & Notfall", name: "REI (Mini Waschmittel)", weight: 0.025, qty: "", worn: false },
+      { id: 36, cat: 2, subcat: "Wäsche, Werkzeug & Notfall", name: "Wäscheklammern (4x)", weight: 0.015, qty: "", worn: false },
+      { id: 37, cat: 2, subcat: "Wäsche, Werkzeug & Notfall", name: "Nähset Mini", weight: 0.005, qty: "", worn: false },
+      { id: 38, cat: 2, subcat: "Wäsche, Werkzeug & Notfall", name: "Taschenmesser mini", weight: 0.020, qty: "", worn: false },
+      { id: 39, cat: 2, subcat: "Wäsche, Werkzeug & Notfall", name: "Notfallbiwak", weight: 0.150, qty: "", worn: false },
+      { id: 40, cat: 2, subcat: "Wäsche, Werkzeug & Notfall", name: "Karabiner", weight: 0.022, qty: "", worn: false },
+      { id: 41, cat: 3, subcat: "Elektronik & Navigation", name: "Smartphone", weight: 0.220, qty: "", worn: false },
+      { id: 42, cat: 3, subcat: "Elektronik & Navigation", name: "Anker Ladestecker 2x USB-C", weight: 0.089, qty: "", worn: false },
+      { id: 43, cat: 3, subcat: "Elektronik & Navigation", name: "Adapter USB-C auf Garmin", weight: 0.002, qty: "", worn: false },
+      { id: 44, cat: 3, subcat: "Elektronik & Navigation", name: "Anker USB-C Kabel", weight: 0.016, qty: "", worn: false },
+      { id: 45, cat: 3, subcat: "Elektronik & Navigation", name: "Powerbank (10.000 mAh)", weight: 0.200, qty: "", worn: false },
+      { id: 46, cat: 3, subcat: "Elektronik & Navigation", name: "Kopfhörer", weight: 0.045, qty: "", worn: false },
+      { id: 47, cat: 3, subcat: "Elektronik & Navigation", name: "Kopflampe (LED)", weight: 0.058, qty: "", worn: false },
+      { id: 48, cat: 3, subcat: "Elektronik & Navigation", name: "Lampe AliExpress", weight: 0.033, qty: "", worn: false },
+      { id: 49, cat: 3, subcat: "Elektronik & Navigation", name: "Rasierer (Elektrisch)", weight: 0.200, qty: "", worn: false },
+      { id: 50, cat: 3, subcat: "Elektronik & Navigation", name: "Adapter Laden Rasierer", weight: 0.009, qty: "", worn: false },
+      { id: 51, cat: 4, subcat: "Körperpflege & Hygiene", name: "Mikrofaser-Handtuch (mini - blau/grün - 39x55)", weight: 0.037, qty: "", worn: false },
+      { id: 52, cat: 4, subcat: "Körperpflege & Hygiene", name: "Mikrofaser-Handtuch (groß - grau - 160x80)", weight: 0.272, qty: "", worn: false },
+      { id: 53, cat: 4, subcat: "Körperpflege & Hygiene", name: "Zahnbürste", weight: 0.018, qty: "", worn: false },
+      { id: 54, cat: 4, subcat: "Körperpflege & Hygiene", name: "Zahnpasta", weight: 0.050, qty: "", worn: false },
+      { id: 55, cat: 4, subcat: "Körperpflege & Hygiene", name: "Festes Shampoo", weight: 0.030, qty: "", worn: false },
+      { id: 56, cat: 4, subcat: "Körperpflege & Hygiene", name: "Gesichtscreme", weight: 0.065, qty: "", worn: false },
+      { id: 57, cat: 4, subcat: "Körperpflege & Hygiene", name: "Haargel", weight: 0.115, qty: "", worn: false },
+      { id: 58, cat: 4, subcat: "Körperpflege & Hygiene", name: "Deoroller", weight: 0.081, qty: "", worn: false },
+      { id: 59, cat: 4, subcat: "Körperpflege & Hygiene", name: "Parfum", weight: 0.018, qty: "", worn: false },
+      { id: 60, cat: 4, subcat: "Körperpflege & Hygiene", name: "Einweg-Nassrasierer", weight: 0.006, qty: "", worn: false },
+      { id: 61, cat: 4, subcat: "Körperpflege & Hygiene", name: "Nagelset", weight: 0.068, qty: "", worn: false },
+      { id: 62, cat: 4, subcat: "Körperpflege & Hygiene", name: "Zahnseide Sticks", weight: 0.030, qty: "", worn: false },
+      { id: 63, cat: 4, subcat: "Körperpflege & Hygiene", name: "Taschentücher", weight: 0.037, qty: "", worn: false },
+      { id: 64, cat: 4, subcat: "Körperpflege & Hygiene", name: "Feuchtes Toilettenpapier", weight: 0.100, qty: "", worn: false },
+      { id: 65, cat: 4, subcat: "Körperpflege & Hygiene", name: "Oropax", weight: 0.020, qty: "", worn: false },
+      { id: 66, cat: 4, subcat: "Erste Hilfe & Apotheke", name: "Leukoplast", weight: 0.030, qty: "", worn: false },
+      { id: 67, cat: 4, subcat: "Erste Hilfe & Apotheke", name: "Wichtige Medikamente (Kopfweh, Kohle etc.)", weight: 0.100, qty: "", worn: false },
+      { id: 68, cat: 4, subcat: "Erste Hilfe & Apotheke", name: "Voltaren Creme", weight: 0.086, qty: "", worn: false },
+      { id: 69, cat: 4, subcat: "Erste Hilfe & Apotheke", name: "Hirschtalg", weight: 0.120, qty: "", worn: false },
+      { id: 70, cat: 4, subcat: "Erste Hilfe & Apotheke", name: "Pflaster (Blasen-, Normale Pflaster)", weight: 0.060, qty: "", worn: false },
+      { id: 71, cat: 4, subcat: "Erste Hilfe & Apotheke", name: "Bandage Knie", weight: 0.062, qty: "", worn: false },
+      { id: 72, cat: 4, subcat: "Erste Hilfe & Apotheke", name: "Bandage Sprunggelenk", weight: 0.034, qty: "", worn: false },
+      { id: 73, cat: 4, subcat: "Dokumente & Tagebuch", name: "Pilgerausweis (Credencial)", weight: 0.016, qty: "", worn: false },
+      { id: 74, cat: 4, subcat: "Dokumente & Tagebuch", name: "Hülle für Pilgerausweis", weight: 0.024, qty: "", worn: false },
+      { id: 75, cat: 4, subcat: "Dokumente & Tagebuch", name: "Personalausweis", weight: 0.015, qty: "", worn: false },
+      { id: 76, cat: 4, subcat: "Dokumente & Tagebuch", name: "Krankenkassenkarte / Versicherung", weight: 0.010, qty: "", worn: false },
+      { id: 77, cat: 4, subcat: "Dokumente & Tagebuch", name: "EC-/Kreditkarte + Bargeld", weight: 0.050, qty: "", worn: false },
+      { id: 78, cat: 4, subcat: "Dokumente & Tagebuch", name: "Jakobsmuschel", weight: 0.022, qty: "", worn: false },
+      { id: 79, cat: 4, subcat: "Dokumente & Tagebuch", name: "Kugelschreiber Mehrfarbig", weight: 0.010, qty: "", worn: false },
+      { id: 80, cat: 4, subcat: "Dokumente & Tagebuch", name: "Heft als Tagebuch", weight: 0.100, qty: "", worn: false }
     ];
 
-    /* ==========================================================================
-       APP STATE & LOCAL STORAGE (ROBUST FÜR GITHUB PAGES & IFRAMES)
-       ========================================================================== */
     let currentRegion = 'all';
 
     function safeGetStorage(key) {
@@ -608,7 +684,7 @@
       try { localStorage.setItem(key, val); } catch (e) {}
     }
 
-    let storedPack = safeGetStorage('camino_pack_items_v11');
+    let storedPack = safeGetStorage('camino_pack_items_v14');
     let userPackItems = null;
     try {
       userPackItems = storedPack ? JSON.parse(storedPack) : null;
@@ -616,12 +692,11 @@
 
     if (!userPackItems || !Array.isArray(userPackItems) || userPackItems.length === 0) {
       userPackItems = JSON.parse(JSON.stringify(packingData));
-      safeSetStorage('camino_pack_items_v11', JSON.stringify(userPackItems));
+      safeSetStorage('camino_pack_items_v14', JSON.stringify(userPackItems));
     }
 
     let map, chart;
 
-    /* TAB SWITCHING */
     function switchTab(tabId, btn) {
       document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
       document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
@@ -633,7 +708,6 @@
       }
     }
 
-    /* RENDER TABLE & CARDS */
     function renderPlan() {
       const tbody = document.getElementById('tableBody');
       if (!tbody) return;
@@ -727,9 +801,6 @@
       });
     }
 
-    /* ==========================================================================
-       WEATHER API INTEGRATION
-       ========================================================================== */
     async function fetchWeather(locationQuery, btn) {
       btn.innerText = "⏳ Lade...";
       try {
@@ -754,9 +825,6 @@
       }
     }
 
-    /* ==========================================================================
-       PACKING LIST LOGIC (MENGE + AM KÖRPER)
-       ========================================================================== */
     function renderPackingList() {
       let packTotal = 0;
       let wornTotal = 0;
@@ -767,36 +835,46 @@
         container.innerHTML = '';
         let catWeight = 0;
 
-        userPackItems.filter(item => item.cat === c).forEach((item) => {
-          const rawQty = (item.qty === "" || item.qty === null || item.qty === undefined) ? "" : item.qty;
-          const numQty = rawQty === "" || isNaN(parseInt(rawQty, 10)) ? 0 : parseInt(rawQty, 10);
-          const itemWeightTotal = numQty * item.weight;
+        const catItems = userPackItems.filter(item => item.cat === c);
+        const subcats = [...new Set(catItems.map(i => i.subcat))];
 
-          if (numQty > 0) {
-            catWeight += itemWeightTotal;
-            if (item.worn) {
-              wornTotal += itemWeightTotal;
-            } else {
-              packTotal += itemWeightTotal;
+        subcats.forEach(sub => {
+          const subHeader = document.createElement('div');
+          subHeader.className = 'subcat-header';
+          subHeader.innerText = sub;
+          container.appendChild(subHeader);
+
+          catItems.filter(i => i.subcat === sub).forEach(item => {
+            const rawQty = (item.qty === "" || item.qty === null || item.qty === undefined) ? "" : item.qty;
+            const numQty = rawQty === "" || isNaN(parseInt(rawQty, 10)) ? 0 : parseInt(rawQty, 10);
+            const itemWeightTotal = numQty * item.weight;
+
+            if (numQty > 0) {
+              catWeight += itemWeightTotal;
+              if (item.worn) {
+                wornTotal += itemWeightTotal;
+              } else {
+                packTotal += itemWeightTotal;
+              }
             }
-          }
 
-          const div = document.createElement('div');
-          div.className = 'pack-item-row';
-          div.innerHTML = `
-            <div class="pack-item-info">
-              <input type="number" min="0" max="99" class="qty-input" placeholder="0" value="${rawQty}" onchange="updatePackQty(${item.id}, this.value)" oninput="updatePackQty(${item.id}, this.value)">
-              <span style="${numQty > 0 ? 'font-weight:600; color:var(--text-main);' : 'color:var(--text-muted);'}">${item.name}</span>
-            </div>
-            <div class="pack-item-controls">
-              <label class="worn-label">
-                <input type="checkbox" ${item.worn ? 'checked' : ''} onchange="toggleWorn(${item.id}, this.checked)">
-                <span>👕 Am Körper</span>
-              </label>
-              <span class="weight-tag" style="min-width:65px; text-align:right;">${itemWeightTotal > 0 ? itemWeightTotal.toFixed(2) : item.weight.toFixed(2)} kg</span>
-            </div>
-          `;
-          container.appendChild(div);
+            const div = document.createElement('div');
+            div.className = 'pack-item-row';
+            div.innerHTML = `
+              <div class="pack-item-info">
+                <input type="number" min="0" max="99" class="qty-input" placeholder="0" value="${rawQty}" onchange="updatePackQty(${item.id}, this.value)" oninput="updatePackQty(${item.id}, this.value)">
+                <span style="${numQty > 0 ? 'font-weight:600; color:var(--text-main);' : 'color:var(--text-muted);'}">${item.name}</span>
+              </div>
+              <div class="pack-item-controls">
+                <label class="worn-label">
+                  <input type="checkbox" ${item.worn ? 'checked' : ''} onchange="toggleWorn(${item.id}, this.checked)">
+                  <span>👕 Am Körper</span>
+                </label>
+                <span class="weight-tag" style="min-width:65px; text-align:right;">${itemWeightTotal > 0 ? itemWeightTotal.toFixed(3) : item.weight.toFixed(3)} kg</span>
+              </div>
+            `;
+            container.appendChild(div);
+          });
         });
 
         const catEl = document.getElementById(`catWeight${c}`);
@@ -817,7 +895,7 @@
       const item = userPackItems.find(i => i.id === itemId);
       if (item) {
         item.qty = val === "" ? "" : Math.max(0, parseInt(val, 10) || 0);
-        safeSetStorage('camino_pack_items_v11', JSON.stringify(userPackItems));
+        safeSetStorage('camino_pack_items_v14', JSON.stringify(userPackItems));
         renderPackingList();
       }
     }
@@ -826,14 +904,46 @@
       const item = userPackItems.find(i => i.id === itemId);
       if (item) {
         item.worn = checked;
-        safeSetStorage('camino_pack_items_v11', JSON.stringify(userPackItems));
+        safeSetStorage('camino_pack_items_v14', JSON.stringify(userPackItems));
         renderPackingList();
       }
     }
 
-    /* ==========================================================================
-       MAP & CHART INITIALIZATION
-       ========================================================================== */
+    function addNewItem(event) {
+      event.preventDefault();
+      
+      const nameInput = document.getElementById('newItemName');
+      const catSelect = document.getElementById('newItemCat');
+      const weightInput = document.getElementById('newItemWeight');
+
+      const name = nameInput.value.trim();
+      const [catStr, subcatStr] = catSelect.value.split('|');
+      const cat = parseInt(catStr, 10);
+      const weightGram = parseFloat(weightInput.value);
+
+      if (!name || isNaN(weightGram) || weightGram <= 0) {
+        alert("Bitte gib einen gültigen Namen und ein Gewicht in Gramm ein.");
+        return;
+      }
+
+      const newItem = {
+        id: Date.now(),
+        cat: cat,
+        subcat: subcatStr,
+        name: name,
+        weight: weightGram / 1000,
+        qty: 1,
+        worn: false
+      };
+
+      userPackItems.push(newItem);
+      safeSetStorage('camino_pack_items_v14', JSON.stringify(userPackItems));
+      
+      nameInput.value = '';
+      weightInput.value = '';
+      renderPackingList();
+    }
+
     function initMapAndChart() {
       const intlPoints = {
         muenchen: { name: "München (MUC)", lat: 48.3537, lng: 11.7861, desc: "<b>Start & Ziel</b><br>✈️ 04.09.: Flug IB1310 nach Madrid (12:10)<br>✈️ 22.09.: Rückflug UX1517 Ankunft aus Madrid" },
@@ -843,20 +953,20 @@
       };
 
       const waypoints = [
-        { name: "Oviedo", lat: 43.3619, lng: -5.8494, date: "05.09. & 06.09.", info: "Ankunft per Bus aus León | 🏨 La Hospederia<br>Start Kathedrale Oviedo", region: "Asturien", color: "#7c3aed" },
-        { name: "Grado", lat: 43.3889, lng: -6.0718, date: "06.09. (Etappe 1)", info: "Etappe 1: 26,5 km | 620 hm ↑", region: "Asturien", color: "#0284c7" },
-        { name: "Salas", lat: 43.4131, lng: -6.2597, date: "07.09. (Etappe 2)", info: "Etappe 2: 22,1 km | 490 hm ↑", region: "Asturien", color: "#0284c7" },
-        { name: "Tineo", lat: 43.3364, lng: -6.4158, date: "08.09. (Etappe 3)", info: "Etappe 3: 19,9 km | 780 hm ↑", region: "Asturien", color: "#0284c7" },
-        { name: "Borres", lat: 43.3258, lng: -6.5369, date: "09.09. (Etappe 4)", info: "Etappe 4: 15,7 km | 520 hm ↑", region: "Asturien", color: "#0284c7" },
-        { name: "Berducedo", lat: 43.2758, lng: -6.8394, date: "10.09. (Etappe 5)", info: "Etappe 5 (Königsetappe): 24,6 km | 1.100 hm ↑ (via Hospitales)", region: "Königsetappe", color: "#e11d48" },
-        { name: "Grandas de Salime", lat: 43.2147, lng: -6.9208, date: "11.09. (Etappe 6)", info: "Etappe 6: 20,3 km | 320 hm ↑ (Embalse de Salime)", region: "Asturien", color: "#0284c7" },
-        { name: "A Fonsagrada", lat: 43.1256, lng: -7.0700, date: "12.09. (Etappe 7)", info: "Etappe 7: 25,7 km | 930 hm ↑ (Grenzübertritt nach Galicien)", region: "Galicien", color: "#059669" },
-        { name: "O Cádavo", lat: 43.0189, lng: -7.3061, date: "13.09. (Etappe 8)", info: "Etappe 8: 24,4 km | 610 hm ↑", region: "Galicien", color: "#059669" },
-        { name: "Lugo", lat: 43.0097, lng: -7.5568, date: "14.09. (Etappe 9)", info: "Etappe 9: 30,6 km | 480 hm ↑ (Römische Stadtmauer)", region: "Galicien", color: "#059669" },
-        { name: "Ferreira", lat: 42.9231, lng: -7.8089, date: "15.09. (Etappe 10)", info: "Etappe 10: 27,1 km | 380 hm ↑", region: "Galicien", color: "#059669" },
-        { name: "Boente", lat: 42.8683, lng: -8.0125, date: "16.09. (Etappe 11)", info: "Etappe 11: 26,0 km | 420 hm ↑ (Einmündung Camino Francés)", region: "Galicien", color: "#059669" },
-        { name: "A Rúa", lat: 42.9036, lng: -8.3183, date: "17.09. (Etappe 12)", info: "Etappe 12: 26,2 km | 340 hm ↑", region: "Galicien", color: "#059669" },
-        { name: "Santiago de Compostela", lat: 42.8805, lng: -8.5457, date: "18.09. & 21.09.", info: "Kathedrale Santiago<br>🏡 Nacht 1: 18.09. (Fr)<br>🚌 Ausflug Fisterra: 19.09. - 21.09.<br>🏡 Letzte Nacht: 21.09. (Mo)<br>✈️ Rückflug: 22.09. (Di)", region: "Ziel", color: "#ca8a04" }
+        { name: "Oviedo", lat: 43.3619, lng: -5.8494, date: "05.09. & 06.09.", info: "Ankunft per Bus aus León | 🏨 La Hospederia<br>Start Kathedrale Oviedo", region: "Asturien", color: "#7c3aed", ele: 230 },
+        { name: "Grado", lat: 43.3889, lng: -6.0718, date: "06.09. (Etappe 1)", info: "Etappe 1: 26,5 km | 620 hm ↑", region: "Asturien", color: "#0284c7", ele: 60 },
+        { name: "Salas", lat: 43.4131, lng: -6.2597, date: "07.09. (Etappe 2)", info: "Etappe 2: 22,1 km | 490 hm ↑", region: "Asturien", color: "#0284c7", ele: 240 },
+        { name: "Tineo", lat: 43.3364, lng: -6.4158, date: "08.09. (Etappe 3)", info: "Etappe 3: 19,9 km | 780 hm ↑", region: "Asturien", color: "#0284c7", ele: 675 },
+        { name: "Borres", lat: 43.3258, lng: -6.5369, date: "09.09. (Etappe 4)", info: "Etappe 4: 15,7 km | 520 hm ↑", region: "Asturien", color: "#0284c7", ele: 630 },
+        { name: "Berducedo", lat: 43.2758, lng: -6.8394, date: "10.09. (Etappe 5)", info: "Etappe 5 (Königsetappe): 24,6 km | 1.100 hm ↑ (via Hospitales - Pass 1.140 m)", region: "Königsetappe", color: "#e11d48", ele: 900 },
+        { name: "Grandas de Salime", lat: 43.2147, lng: -6.9208, date: "11.09. (Etappe 6)", info: "Etappe 6: 20,3 km | 320 hm ↑ (Embalse de Salime 220 m)", region: "Asturien", color: "#0284c7", ele: 562 },
+        { name: "A Fonsagrada", lat: 43.1256, lng: -7.0700, date: "12.09. (Etappe 7)", info: "Etappe 7: 25,7 km | 930 hm ↑ (Puerto del Acebo 1.030 m)", region: "Galicien", color: "#059669", ele: 950 },
+        { name: "O Cádavo", lat: 43.0189, lng: -7.3061, date: "13.09. (Etappe 8)", info: "Etappe 8: 24,4 km | 610 hm ↑ (Alto da Vaqueriza 910 m)", region: "Galicien", color: "#059669", ele: 710 },
+        { name: "Lugo", lat: 43.0097, lng: -7.5568, date: "14.09. (Etappe 9)", info: "Etappe 9: 30,6 km | 480 hm ↑ (Römische Stadtmauer)", region: "Galicien", color: "#059669", ele: 465 },
+        { name: "Ferreira", lat: 42.9231, lng: -7.8089, date: "15.09. (Etappe 10)", info: "Etappe 10: 27,1 km | 380 hm ↑", region: "Galicien", color: "#059669", ele: 450 },
+        { name: "Boente", lat: 42.8683, lng: -8.0125, date: "16.09. (Etappe 11)", info: "Etappe 11: 26,0 km | 420 hm ↑ (Einmündung Camino Francés)", region: "Galicien", color: "#059669", ele: 360 },
+        { name: "A Rúa", lat: 42.9036, lng: -8.3183, date: "17.09. (Etappe 12)", info: "Etappe 12: 26,2 km | 340 hm ↑", region: "Galicien", color: "#059669", ele: 310 },
+        { name: "Santiago de Compostela", lat: 42.8805, lng: -8.5457, date: "18.09. & 21.09.", info: "Kathedrale Santiago<br>🏡 Nacht 1: 18.09. (Fr)<br>🚌 Ausflug Fisterra: 19.09. - 21.09.<br>🏡 Letzte Nacht: 21.09. (Mo)<br>✈️ Rückflug: 22.09. (Di)", region: "Ziel", color: "#ca8a04", ele: 260 }
       ];
 
       const mapContainer = document.getElementById('map');
@@ -889,7 +999,7 @@
               ${index === 0 ? '🏁 Start Camino' : (index === waypoints.length - 1 ? '🎉 Ziel Santiago' : 'Etappe ' + index)}: ${wp.name}
             </h3>
             <div style="font-size: 0.85rem; margin-bottom: 6px; line-height: 1.3; color: #334155;">${wp.info}</div>
-            <div style="font-size: 0.82rem; color: #64748b;"><strong>📍 Region:</strong> ${wp.region}</div>
+            <div style="font-size: 0.82rem; color: #64748b;"><strong>📍 Seehöhe:</strong> ca. ${wp.ele} m.ü.NHN</div>
           </div>
         `;
 
@@ -934,31 +1044,69 @@
 
       map.fitBounds(allBounds, { padding: [30, 30] });
 
+      /* ECHTES HÖHENPROFIL (SEEHÖHE ENTLANG DER ROUTE MIT PASS-HIGHLIGHTS) */
       const chartCanvas = document.getElementById('elevationChart');
       if (chartCanvas) {
         const ctx = chartCanvas.getContext('2d');
-        const stagesOnly = rawData.filter(d => d.km > 0);
         
+        // Vollständiger Höhenverlauf inklusive relevanter Pässe/Täler
+        const profileLabels = [
+          'Oviedo', 'Grado', 'Salas', 'Tineo', 'Borres', 
+          'Hospitales (Pass 1140m)', 'Berducedo', 'Stausee Salime (220m)', 'Grandas', 
+          'Puerto del Acebo (1030m)', 'A Fonsagrada', 'Alto Vaqueriza (910m)', 'O Cádavo', 
+          'Lugo', 'Ferreira', 'Boente', 'A Rúa', 'Santiago'
+        ];
+
+        const profileData = [
+          230, 60, 240, 675, 630, 
+          1140, 900, 220, 562, 
+          1030, 950, 910, 710, 
+          465, 450, 360, 310, 260
+        ];
+
         chart = new Chart(ctx, {
           type: 'line',
           data: {
-            labels: stagesOnly.map(s => s.badge),
+            labels: profileLabels,
             datasets: [{
-              label: 'Höhenmeter Aufstieg (m)',
-              data: [620, 490, 780, 520, 1100, 320, 930, 610, 480, 380, 420, 340, 310],
-              borderColor: '#d97706',
-              backgroundColor: 'rgba(217, 119, 6, 0.15)',
+              label: 'Seehöhe (m.ü.NHN)',
+              data: profileData,
+              borderColor: '#0284c7',
+              backgroundColor: 'rgba(2, 132, 199, 0.18)',
               fill: true,
-              tension: 0.3
+              tension: 0.35,
+              pointRadius: 4,
+              pointHoverRadius: 6,
+              pointBackgroundColor: '#0284c7'
             }]
           },
           options: {
             responsive: true,
             maintainAspectRatio: false,
-            plugins: { legend: { display: false } },
+            plugins: {
+              legend: { display: false },
+              tooltip: {
+                callbacks: {
+                  label: function(context) {
+                    return ` Seehöhe: ${context.parsed.y} m.ü.NHN`;
+                  }
+                }
+              }
+            },
             scales: {
-              x: { ticks: { color: '#64748b', font: { size: 10 } } },
-              y: { ticks: { color: '#64748b' }, grid: { color: '#e2e8f0' } }
+              x: { 
+                ticks: { 
+                  color: '#64748b', 
+                  font: { size: 9 },
+                  maxRotation: 45,
+                  minRotation: 30
+                } 
+              },
+              y: { 
+                title: { display: true, text: 'Höhe (Meter)', color: '#64748b', font: { size: 10 } },
+                ticks: { color: '#64748b' }, 
+                grid: { color: '#e2e8f0' } 
+              }
             }
           }
         });
